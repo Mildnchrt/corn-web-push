@@ -1,20 +1,18 @@
-const { webPushNotification } = require('../../services/web-noti')
-const libFirestore  = require('../../library/firestore')
-// const sellsuki = require('../../library/sellsuki')
-// sellsuki.getUser = jest.fn().mockReturnValue({data: {results: {}}})
+const firestore = require('../../../library/firestore')
+const sellsuki = require('../../../library/sellsuki')
 
-
+sellsuki.getUser = jest.fn().mockReturnValueOnce({ data: { results: {} } })
+const { webPushNotification } = require('../../../services/web-noti')
 
 describe('describe webPushnotification endpoint', () => {
-  it('getStage', () => {
-    console.log('check user are in product stage')
+  it ('get user stage', () => {
     let user = {
       count_product: 1
     }
     expect(webPushNotification.getStage(user)).toEqual('product')
   })
 
-  it('sent null data to transferData', () => {
+  it ('sent null data to transferData', () => {
     let output = {
       storeId: '',
       playerId: '',
@@ -29,7 +27,7 @@ describe('describe webPushnotification endpoint', () => {
     expect(webPushNotification.transferData('', '', null, null, '', '', '', null, null)).toEqual(output)
   })
 
-  it('sent data to transferData', () => {
+  it ('sent data to transferData', () => {
     let data = webPushNotification.transferData('01', '01', false, false, '', 'today', '', {test: 'test'}, {test: 'test'})
 
     let output = {
@@ -45,12 +43,9 @@ describe('describe webPushnotification endpoint', () => {
     }
     expect(data).toEqual(output)
   })
-  // it.only('getUserFromSellsuki', async () => {
-  //   // test.getActiveUser = jest.fn().mockReturnValue(true)
-  //   // sellsuki.getUser = jest.fn().mockReturnValue({data: {results: {}}})
-  //   await webPushNotification.getUserFromSellsuki('1')
 
-  //   // console.log('mock', sellsuki.getUser)
-  //   expect(sellsuki.getUser.mock.calls.length).toBe(1)
-  // })
+  it ('get user from sellsuki data', async () => {
+    await webPushNotification.getUserFromSellsuki('1')
+    expect(sellsuki.getUser.mock.calls.length).toBe(1)
+  })
 })

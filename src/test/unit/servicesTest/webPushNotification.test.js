@@ -1,7 +1,8 @@
 const firestore = require('../../../library/firestore')
 const sellsuki = require('../../../library/sellsuki')
 
-sellsuki.getUser = jest.fn().mockReturnValueOnce({ data: { results: {} } })
+sellsuki.getUser = jest.fn().mockReturnValue({ data: { results: {} } })
+
 const { webPushNotification } = require('../../../services/web-noti')
 
 describe('describe webPushnotification endpoint', () => {

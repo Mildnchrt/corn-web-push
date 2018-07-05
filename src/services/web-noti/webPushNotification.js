@@ -5,6 +5,7 @@ const { STAGE, ONESIGNAL } = require('../../config/constant')
 
 module.exports = {
   getUserNotComplete: function () {
+    console.log('check1')
     var activeUserData = getActiveUser()
     return activeUserData
   },
@@ -36,8 +37,9 @@ module.exports = {
     console.log('test');
     
     var user = await getUser(store)
-    console.log(user)
-    return user.data.results
+    console.log('user', user)
+    
+    return user
   },
 
   getStage: function (user) {

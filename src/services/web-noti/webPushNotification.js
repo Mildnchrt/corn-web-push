@@ -36,7 +36,7 @@ module.exports = {
     console.log('test');
     
     var user = await getUser(store)
-    console.log(user)
+    console.log('user')
     return user.data.results
   },
 

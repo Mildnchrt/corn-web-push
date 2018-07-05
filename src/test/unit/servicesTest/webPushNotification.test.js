@@ -1,9 +1,9 @@
-const { webPushNotification } = require('../../services/web-noti')
-const libFirestore  = require('../../library/firestore')
-// const sellsuki = require('../../library/sellsuki')
-// sellsuki.getUser = jest.fn().mockReturnValue({data: {results: {}}})
+const libFirestore  = require('../../../library/firestore')
+const sellsuki = require('../../../library/sellsuki')
+sellsuki.getUser = jest.fn().mockReturnValue({data: {results: {}}})
+libFirestore.getActiveUser = jest.fn().mockReturnValue({})
 
-
+const { webPushNotification } = require('../../../services/web-noti')
 
 describe('describe webPushnotification endpoint', () => {
   it('getStage', () => {
@@ -47,10 +47,13 @@ describe('describe webPushnotification endpoint', () => {
   })
   // it.only('getUserFromSellsuki', async () => {
   //   // test.getActiveUser = jest.fn().mockReturnValue(true)
-  //   // sellsuki.getUser = jest.fn().mockReturnValue({data: {results: {}}})
   //   await webPushNotification.getUserFromSellsuki('1')
 
-  //   // console.log('mock', sellsuki.getUser)
   //   expect(sellsuki.getUser.mock.calls.length).toBe(1)
   // })
+  it('getUsreNotComplete', async () => {
+    await webPushNotification.getUserNotComplete()
+    expect(libFirestore.getActiveUser.mock.calls.length).toBe(1)
+  })
+
 })

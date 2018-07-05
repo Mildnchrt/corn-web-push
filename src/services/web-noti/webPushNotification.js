@@ -33,7 +33,10 @@ module.exports = {
   },
 
   getUserFromSellsuki: async function (store) {
+    console.log('test');
+    
     var user = await getUser(store)
+    console.log(user)
     return user.data.results
   },
 

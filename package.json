@@ -9,6 +9,7 @@
     "cors": "^2.8.4",
     "express": "^4.16.2",
     "firebase": "^5.2.0",
+    "jest": "^23.3.0",
     "jsonwebtoken": "^8.1.0",
     "morgan": "^1.9.0",
     "mysql2": "^1.5.1",
@@ -24,7 +25,6 @@
     "replace-in-file": "^3.1.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "migration": "node ./src/migration",
     "start": "export NODE_ENV=local && nodemon .",
     "test": "jest"
@@ -35,5 +35,11 @@
   },
   "author": "",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/flyingcomma/sms-product-service#readme"
+  "homepage": "https://bitbucket.org/flyingcomma/sms-product-service#readme",
+  "jest": {
+    "verbose": true,
+    "testMatch": [
+      "**/test/unit/**/**.test.js"
+    ]
+  }
 }

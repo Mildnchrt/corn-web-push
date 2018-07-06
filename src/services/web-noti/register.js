@@ -15,8 +15,10 @@ module.exports = {
   },
   
   createNewUser: async function (storeId, playerId, isAllow, updateTime) {
-    let userOneSignal = await getDevice.getDevice(playerId)
-    let userSellsuki = await getUser.getUser(storeId)
+    let promiseOneSignal = getDevice.getDevice(playerId)
+    let promiseSellsuki = getUser.getUser(storeId)
+    let userOneSignal = await  promiseOneSignal
+    let userSellsuki = await promiseSellsuki
     let data = webPushNotification.transferData(
       storeId, 
       playerId, 

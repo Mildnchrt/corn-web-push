@@ -1,4 +1,4 @@
-const { ONESIGNAL } = require('../../config/constant')
+const { ONESIGNAL } = require('../../config')
 
 module.exports = async function (message) {
   var headers = {

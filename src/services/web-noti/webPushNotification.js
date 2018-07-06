@@ -1,7 +1,7 @@
 const { getActiveUser, updateData }  = require('../../library/firestore')
 const { getUser } = require('../../library/sellsuki')
 const { sendNotification }  = require('../../library/onesignal')
-const { STAGE, ONESIGNAL } = require('../../config/constant')
+const { STAGE, ONESIGNAL } = require('../../config')
 
 module.exports = {
   getUserNotComplete: function () {

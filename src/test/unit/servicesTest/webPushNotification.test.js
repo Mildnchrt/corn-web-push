@@ -1,7 +1,9 @@
 const libFirestore  = require('../../../library/firestore')
 const sellsuki = require('../../../library/sellsuki')
+const libOnesignal = require('../../../library/onesignal')
 sellsuki.getUser = jest.fn().mockReturnValue({data: {results: {}}})
 libFirestore.getActiveUser = jest.fn().mockReturnValue({})
+libOnesignal.sendNotification = jest.fn()
 
 const { webPushNotification } = require('../../../services/web-noti')
 
@@ -45,15 +47,14 @@ describe('describe webPushnotification endpoint', () => {
     }
     expect(data).toEqual(output)
   })
-  // it.only('getUserFromSellsuki', async () => {
-  //   // test.getActiveUser = jest.fn().mockReturnValue(true)
-  //   await webPushNotification.getUserFromSellsuki('1')
-
-  //   expect(sellsuki.getUser.mock.calls.length).toBe(1)
-  // })
   it('getUsreNotComplete', async () => {
     await webPushNotification.getUserNotComplete()
     expect(libFirestore.getActiveUser.mock.calls.length).toBe(1)
+  })
+  it('pushNotification', async () => {
+    let user = {}
+    let a = webPushNotification.pushNotification(user)
+    expect(libOnesignal.sendNotification.mock.calls.length).toBe(1)
   })
 
 })

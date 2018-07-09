@@ -1,8 +1,8 @@
-const userRef = require('./config')
+const userRef = require('../../config')
 module.exports = {
   getUserByStoreId (storeId) {
     return new Promise((resolve, reject) => {
-      userRef.init().doc(storeId).get()
+      userRef.database.init().doc(storeId).get()
         .then(doc => {
           console.log('comein')
           if (!doc.exists) {

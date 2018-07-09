@@ -2,6 +2,7 @@ const firestore = require('../../../library/firestore')
 const sellsuki = require('../../../library/sellsuki')
 
 sellsuki.getUser = jest.fn().mockReturnValue({ data: { results: {} } })
+firestore.updateData = jest.fn()
 
 const { webPushNotification } = require('../../../services/web-noti')
 
@@ -48,5 +49,16 @@ describe('describe webPushnotification endpoint', () => {
   it ('get user from sellsuki data', async () => {
     await webPushNotification.getUserFromSellsuki('1')
     expect(sellsuki.getUser.mock.calls.length).toBe(1)
+  })
+
+  it ('update data to Firestore', () => {
+    let userFirestore = {}
+    let userSellsuki = {}
+    let stage = ''
+    let isComplete = ''
+    let time = ''
+
+    let result = webPushNotification.updateDataToFireStore(userFirestore, userSellsuki, stage, time)
+    expect(firestore.updateData.mock.calls.length).toBe(1)
   })
 })

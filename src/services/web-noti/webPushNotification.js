@@ -68,8 +68,8 @@ module.exports = {
       userFirestore.dataOneSignal,
       userSellsuki
     )
-
-    updateData((userSellsuki.store_id).toString(), transferData)
+    
+    updateData(transferData.storeId, transferData)
   },
 
   pushNotification: async function (user) {
@@ -113,14 +113,14 @@ module.exports = {
 
   transferData: function(storeId, playerId, isAllow, isComplete, stage, creatAt, updateAt, dataOneSignal, dataSellsuki) {
     return transferedData = {
-      storeId: (storeId !== '' ? storeId : ''),
-      playerId: (playerId !== null ? playerId : ''),
-      isAllow: (isAllow !== null ? isAllow : false),
+      storeId: (storeId !== '' && storeId !== undefined ? storeId : ''),
+      playerId: (playerId !== null && playerId !== undefined ? playerId : ''),
+      isAllow: (isAllow !== null && isAllow !== undefined ? isAllow : false),
       isComplete: (isComplete !== null ? isComplete : false),
       stage: (stage !== '' ? stage : STAGE.PRODUCT),
-      creatAt: (creatAt !== '' ? creatAt : ''),
-      updateAt: (updateAt !== '' ? updateAt : ''),
-      dataOneSignal: (dataOneSignal !== null ? dataOneSignal : {}),
+      creatAt: (creatAt !== undefined ? creatAt : ''),
+      updateAt: (updateAt !== undefined ? updateAt : ''),
+      dataOneSignal: (dataOneSignal !== null && dataOneSignal !== undefined ? dataOneSignal : {}),
       dataSellsuki: (dataSellsuki !== null ? dataSellsuki : {})
     }
   }

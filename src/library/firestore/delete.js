@@ -1,7 +1,7 @@
-const userRef = require('./config')
+const userRef = require('../../config')
 
 module.exports = async function (storeId) {
-  userRef
+  userRef.database
     .init()
     .doc(storeId)
     .delete()

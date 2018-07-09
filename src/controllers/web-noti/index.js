@@ -6,6 +6,6 @@ const createUserToFirestore = require('./register')
 module.exports = {
   cronController,
   uiController,
-  // getPlayerIdFireStore,
+  //getPlayerIdFireStore,
   createUserToFirestore
 }

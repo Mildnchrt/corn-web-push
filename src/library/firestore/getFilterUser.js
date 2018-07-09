@@ -1,9 +1,9 @@
-const userRef = require('./config')
+const userRef = require('../../config')
 
 module.exports = async function (key, operation, value) {
   return new Promise((resolve, reject) => {
     resolve(
-      userRef.init().where(key, operation, value).get()
+      userRef.database.init().where(key, operation, value).get()
         .then((snapshot) => {
           return snapshot
         })

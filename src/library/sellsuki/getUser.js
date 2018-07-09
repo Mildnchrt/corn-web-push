@@ -1,15 +1,16 @@
 const axios = require('axios')
 
-module.exports = async function (storeId) {
-  return new Promise((resolve, reject) => {
-    resolve(
-      axios.get('http://192.168.1.254:8003/store/get-store-notification-mock?store_ids[]=' + storeId)
+module.exports = {
+  getUser (storeId) {
+    return new Promise((resolve, reject) => {
+      axios.get('http://192.168.1.254:8003/store/get-store-notification?store_ids[]=' + storeId)
         .then(function (response) {
-          return response
+          resolve(response)
         })
-        .catch(function (error) {
+        .catch(error => {
           console.log(error)
+          reject(error)
         })
-    )
-  })
+    })
+  }
 }

@@ -10,22 +10,20 @@ libOnesignal.getDevice.getDevice = jest.fn().mockReturnValue({response: {data: {
 libSellsuki.getUser.getUser = jest.fn().mockReturnValue({data: {results: {}}})
 webPushNotification.transferData = jest.fn().mockReturnValue({})
 
-
-describe('test register services Have', async () => {
-
-  it('test checkPlayerFirestore function (not have)', async () => { 
+describe ('test register services Have', async () => {
+  it ('test checkPlayerFirestore function (not have)', async () => { 
     const result = await checkPlayerFirestore('1')
     expect(result).toBe(false)
     expect(libFirestore.getUserByStoreId.getUserByStoreId.mock.calls.length).toBe(1)
   })
 
-  it('test checkPlayerFirestore function (have already)', async () => { 
+  it ('test checkPlayerFirestore function (have already)', async () => { 
     const result = await checkPlayerFirestore('1')
     expect(result).toBe(true)
     expect(libFirestore.getUserByStoreId.getUserByStoreId.mock.calls.length).toBe(2)
   })
   
-  it('test createNewUser function', async () => {
+  it ('test createNewUser function', async () => {
     let updateTime = new Date()
     const result = await createNewUser('1', '5e094f14-fd88-493b-a2a3-ea09bb69f1b1', true, updateTime)
     expect(result).toBe('success')
@@ -34,8 +32,4 @@ describe('test register services Have', async () => {
     expect(webPushNotification.transferData.mock.calls.length).toBe(1)
     expect(libFirestore.createData.createData.mock.calls.length).toBe(1)
   })
-
-
 })
-
-

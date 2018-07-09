@@ -14,29 +14,30 @@ module.exports = {
     var isFirst = true
     var userCollections = {}
     var userData = []
-
-    userNotDone.forEach((collections) => {
-      if (isFirst) {
-        str += collections.data().storeId
-        isFirst = false
-      } else {
-        str += ',' + collections.data().storeId
+    
+    if (Object.keys(userNotDone).length !== 0) {
+      userNotDone.forEach((collections) => {
+        if (isFirst) {
+          str += collections.data().storeId
+          isFirst = false
+        } else {
+          str += ',' + collections.data().storeId
+        }
+        userData.push(collections.data())
+      })
+      userCollections = {
+        storeIds: str,
+        data: userData
       }
-      userData.push(collections.data())
-    })
-
-    userCollections = {
-      storeIds: str,
-      data: userData
+    } else {
+      return {}
     }
+
     return userCollections
   },
 
   getUserFromSellsuki: async function (store) {
-    console.log('test')
-    
     var user = await getUser(store)
-    console.log(user)
     return user.data.results
   },
 
@@ -71,33 +72,33 @@ module.exports = {
       userFirestore.dataOneSignal,
       userSellsuki
     )
-
-    updateData((userSellsuki.store_id).toString(), transferData)
+    
+    updateData(transferData.storeId, transferData)
   },
 
-  pushNotification: async function (user) {
+  pushNotification: function (user) {
     let heading, content
     // let url = ''
     
-    if (user.data().dataOneSignal.language === 'th') {
-      if (user.data().stage === constant.STAGE.PRODUCT) {
+    if (user.dataOneSignal && user.dataOneSignal.language === 'th') {
+      if (user.stage === constant.STAGE.PRODUCT) {
         heading = 'อยากเริ่มขาย ต้องเพิ่มสินค้าก่อนนะ!'
         content = 'เริ่มการขายผ่าน Sellsuki โดยการเพิ่มสินค้าในสต๊อกสินค้า'
-      } else if (user.data().stage === constant.STAGE.SHIPPING) {
+      } else if (user.stage === constant.STAGE.SHIPPING) {
         heading = 'เพิ่มช่องทางชำระเงินสำหรับลูกค้าหรือยัง?'
         content = 'เพิ่มบัญชีธนาคารหรือช่องทางอื่นๆ เพื่อรับชำระเงินจากลูกค้าหลังยืนยันออเดอร์'
-      } else if (user.data().stage === constant.STAGE.PAYMENT) {
+      } else if (user.stage === constant.STAGE.PAYMENT) {
         heading = 'อย่าลืมเพิ่มวิธีจัดส่งและค่าส่งสินค้าด้วยนะ'
         content = 'เพิ่มวิธีจัดส่งสินค้าพร้อมค่าจัดส่งแบบต่างๆ ให้ลูกค้าเลือกรับของได้ตามสะดวก'
       }
     } else {
-      if (user.data().stage === constant.STAGE.PRODUCT) {
+      if (user.stage === constant.STAGE.PRODUCT) {
         heading = 'Ready to sell? let’s add your products first!'
         content = 'Add products into Sellsuki inventory to run your online store.'
-      } else if (user.data().stage === constant.STAGE.SHIPPING) {
+      } else if (user.stage === constant.STAGE.SHIPPING) {
         heading = 'Have you added payment methods?'
         content = 'Provide your payment methods for money receiving.'
-      } else if (user.data().stage === constant.STAGE.PAYMENT) {
+      } else if (user.stage === constant.STAGE.PAYMENT) {
         heading = 'Do not forget adding delivery options.'
         content = 'More delivery options, more customer satisfaction.'
       }
@@ -107,23 +108,24 @@ module.exports = {
       app_id: constant.ONESIGNAL.APP_ID,
       headings: { 'en': heading },
       contents: { 'en': content },
-      include_player_ids: [ user.data().playerId ]
+      include_player_ids: [ user.playerId ]
     }
-    
+
     sendNotification(message)
-    return true
+
+    return 'success: 1'
   },
 
   transferData: function(storeId, playerId, isAllow, isComplete, stage, creatAt, updateAt, dataOneSignal, dataSellsuki) {
     return transferedData = {
-      storeId: (storeId !== '' ? storeId : ''),
-      playerId: (playerId !== null ? playerId : ''),
-      isAllow: (isAllow !== null ? isAllow : false),
+      storeId: (storeId !== '' && storeId !== undefined ? storeId : ''),
+      playerId: (playerId !== null && playerId !== undefined ? playerId : ''),
+      isAllow: (isAllow !== null && isAllow !== undefined ? isAllow : false),
       isComplete: (isComplete !== null ? isComplete : false),
       stage: (stage !== '' ? stage : constant.STAGE.PRODUCT),
-      creatAt: (creatAt !== '' ? creatAt : ''),
-      updateAt: (updateAt !== '' ? updateAt : ''),
-      dataOneSignal: (dataOneSignal !== null ? dataOneSignal : {}),
+      creatAt: (creatAt !== undefined ? creatAt : ''),
+      updateAt: (updateAt !== undefined ? updateAt : ''),
+      dataOneSignal: (dataOneSignal !== null && dataOneSignal !== undefined ? dataOneSignal : {}),
       dataSellsuki: (dataSellsuki !== null ? dataSellsuki : {})
     }
   }

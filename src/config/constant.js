@@ -1,4 +1,3 @@
-console.log('Hello local')
 module.exports = {
   STAGE: {
     PRODUCT: 'product',

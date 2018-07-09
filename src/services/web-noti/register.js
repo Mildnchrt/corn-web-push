@@ -5,7 +5,6 @@ const webPushNotification  = require('./webPushNotification')
 
 module.exports = {
   checkPlayerFirestore: async function (storeId) {
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>hello')
     const result = await getUserByStoreId.getUserByStoreId(storeId)
     if (!result) {
       return false

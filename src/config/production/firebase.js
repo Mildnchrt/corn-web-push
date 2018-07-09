@@ -1,12 +1,13 @@
 const firebase = require('firebase')
+const constant = require('./constant')
 
 firebase.initializeApp({
-  apiKey: 'AIzaSyCWJOdnyasNUL7xAWi83WDHihsKj92N7R8',
-  authDomain: 'notification-7e499.firebaseapp.com',
-  databaseURL: 'https://notification-7e499.firebaseio.com',
-  projectId: 'notification-7e499',
-  storageBucket: 'notification-7e499.appspot.com',
-  messagingSenderId: '400202276323'
+  apiKey: constant.FIRESTORE.API_KEY,
+  authDomain: constant.FIRESTORE.AUTH_DOMIN,
+  databaseURL: constant.FIRESTORE.DATABASE_URL,
+  projectId: constant.FIRESTORE.PROJECT_ID,
+  storageBucket: constant.FIRESTORE.STORAGE_BUCKET,
+  messagingSenderId: constant.FIRESTORE.MESSAGING_SENDER_ID
 })
 
 // Initialize Cloud Firestore through Firebase

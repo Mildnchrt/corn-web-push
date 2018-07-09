@@ -1,7 +1,7 @@
 const userRef = require('../../config')
 
 module.exports = {
-  updateData: async function (storeId, data) {
+  async updateData (storeId, data) {
     userRef.database
       .init()
       .doc(storeId)

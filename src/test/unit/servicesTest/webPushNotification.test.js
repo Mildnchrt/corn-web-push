@@ -2,6 +2,7 @@ const libFirestore  = require('../../../library/firestore')
 const sellsuki = require('../../../library/sellsuki')
 const libOnesignal = require('../../../library/onesignal')
 
+// mock return value function
 sellsuki.getUser = jest.fn().mockReturnValue({ data: { results: {} } })
 libFirestore.getActiveUser = jest.fn().mockReturnValue({})
 libOnesignal.sendNotification = jest.fn()
@@ -17,7 +18,7 @@ describe('describe webPushnotification endpoint', () => {
     expect(webPushNotification.getStage(user)).toEqual('product')
   })
 
-  it ('sent null data to transferData', () => {
+  it ('sent null data to change data format', () => {
     let output = {
       storeId: '',
       playerId: '',
@@ -29,11 +30,11 @@ describe('describe webPushnotification endpoint', () => {
       dataOneSignal: {},
       dataSellsuki: {}
     }    
-    expect(webPushNotification.transferData('', '', null, null, '', '', '', null, null)).toEqual(output)
+    expect(webPushNotification.changeDataFormat('', '', null, null, '', '', '', null, null)).toEqual(output)
   })
 
-  it ('sent data to transferData', () => {
-    let data = webPushNotification.transferData('01', '01', false, false, '', 'today', '', {test: 'test'}, {test: 'test'})
+  it ('sent data to change data format', () => {
+    let data = webPushNotification.changeDataFormat('01', '01', false, false, '', 'today', '', {test: 'test'}, {test: 'test'})
     let output = {
       storeId: '01',
       playerId: '01',
@@ -60,22 +61,24 @@ describe('describe webPushnotification endpoint', () => {
     let isComplete = ''
     let time = ''
 
-    let result = webPushNotification.updateDataToFireStore(userFirestore, userSellsuki, stage, time)
+    let result = webPushNotification.updateDataToFirestore(userFirestore, userSellsuki, stage, time)
+    console.log('result ', libFirestore.updateData.mock.length)
+    
     expect(libFirestore.updateData.mock.calls.length).toBe(1)
   })
 
-  it ('getUsreNotComplete', async () => {
+  it ('get user not complete', async () => {
     await webPushNotification.getUserNotComplete()
     expect(libFirestore.getActiveUser.mock.calls.length).toBe(1)
   })
 
-  it ('pushNotification', async () => {
+  it ('push notification', async () => {
     let user = {}
     let result = webPushNotification.pushNotification(user)
     expect(libOnesignal.sendNotification.mock.calls.length).toBe(1)
   })
 
-  it ('setDataStoreCollections', async () => {
+  it ('set data store collections', async () => {
     let userNotDone = {}
     expect(webPushNotification.setDataStoreCollections(userNotDone)).toEqual({})
   })

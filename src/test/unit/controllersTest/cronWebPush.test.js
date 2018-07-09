@@ -1,3 +1,4 @@
+// const firebase = require('firebase')
 const { webPushNotification } = require('../../../services/web-noti')
 const userNotDone = [{storeID: '1'}, {storeId: '2'}]
 const userSellsuki = {
@@ -22,19 +23,24 @@ const userSellsuki = {
 webPushNotification.getUserNotComplete = jest.fn().mockReturnValue(userNotDone)
 webPushNotification.setDataStoreCollections = jest.fn().mockReturnValue({storeIds: '1,2', data: [{}, {}]})
 webPushNotification.getUserFromSellsuki = jest.fn().mockReturnValue(userSellsuki)
-webPushNotification.getStage = jest.fn()
-webPushNotification.pushNotification = jest.fn()
+// webPushNotification.getUserStage = jest.fn()
+// webPushNotification.pushNotification = jest.fn()
 
-const { cronController } = require('../../../controllers/web-noti')
+const {cronController} = require('../../../controllers/web-noti/cronWebPush')
+console.log('cronController >>', cronController)
 
 describe('describe cronWebPush endpoint', () => {
   it ('cronWebPush', async () => {
-    let result = await cronController('', '')
-
-    expect(webPushNotification.getUserNotComplete.mock.calls.length).toBe(2)
-    expect(webPushNotification.setDataStoreCollections.mock.calls.length).toBe(1)
-    expect(webPushNotification.getUserFromSellsuki.mock.calls.length).toBe(1)
-    expect(webPushNotification.getStage.mock.calls.length).toBe(2)
-    expect(webPushNotification.pushNotification.mock.calls.length).toBe(2)
+    let res = await cronController()
+    console.log('res >>> ' , res)
+    // expect(webPushNotification.getUserNotComplete.mock.calls.length).toBe(2)
+    // expect(webPushNotification.setDataStoreCollections.mock.caçlls.length).toBe(1)
+    // expect(webPushNotification.getUserFromSellsuki.mock.calls.length).toBe(1)
+    // expect(webPushNotification.getStage.mock.calls.length).toBe(2)
+    // expect(webPushNotification.pushNotification.mock.calls.length).toBe(2)
+    expect(res).toEqual({
+      success: 1, 
+      message: 'success'
+    })
   })
 })

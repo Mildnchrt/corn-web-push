@@ -4,9 +4,9 @@ const { sendNotification }  = require('../../library/onesignal')
 const { constant } = require('../../config')
 
 module.exports = {
-  getUserNotComplete: function () {
-    var activeUserData = getActiveUser()
-    return activeUserData
+  getUserNotComplete:  function () {
+    // var activeUserData = await getActiveUser()
+    return true
   },
 
   setDataStoreCollections: function (userNotDone) {
@@ -41,7 +41,8 @@ module.exports = {
     return user.data.results
   },
 
-  getStage: function (user) {
+  getUserStage: async function (user) {
+    console.log("useruseruser", user)
     let stage = ''
     if (user.count_product <= 1) {
       stage = constant.STAGE.PRODUCT
@@ -50,11 +51,11 @@ module.exports = {
     } else if (user.count_store_shipping_type <= 1) {
       stage = constant.STAGE.SHIPPING
     }
-
+    console.log("stage stage", stage)
     return stage
   },
 
-  updateDataToFirestore: function (userFirestore, userSellsuki, stage, updateTime) {
+  updateDataToFirestore:  function (userFirestore, userSellsuki, stage, updateTime) {
     let isComplete = false
     if (stage === '') {
       stage = constant.STAGE.SHIPPING
@@ -72,8 +73,8 @@ module.exports = {
       userFirestore.dataOneSignal,
       userSellsuki
     )
-    console.log(data)
-    updateData(data.storeId, data)
+    // console.log(data)
+     updateData(data.storeId, data)
   },
 
   pushNotification: function (user) {
@@ -115,17 +116,20 @@ module.exports = {
     return 'success: 1'
   },
   
-  changeDataFormat: function(storeId, playerId, isAllow, isComplete, stage, creatAt, updateAt, dataOneSignal, dataSellsuki) {
-    return data = {
-      storeId: (storeId !== '' && storeId !== undefined ? storeId : ''),
-      playerId: (playerId !== null && playerId !== undefined ? playerId : ''),
-      isAllow: (isAllow !== null && isAllow !== undefined ? isAllow : false),
-      isComplete: (isComplete !== null ? isComplete : false),
-      stage: (stage !== '' && stage !== undefined ? stage : constant.STAGE.PRODUCT),
-      creatAt: (creatAt !== undefined ? creatAt : ''),
-      updateAt: (updateAt !== undefined ? updateAt : ''),
-      dataOneSignal: (dataOneSignal !== null && dataOneSignal !== undefined ? dataOneSignal : {}),
-      dataSellsuki: (dataSellsuki !== null ? dataSellsuki : {})
+  changeDataFormat: function(storeId, playerId, isAllow, isComplete, stage, createAt, updateAt, dataOneSignal, dataSellsuki) {
+    let data = {
+      storeId: storeId || '',
+      playerId: playerId || '',
+      isAllow: isAllow || false,
+      isComplete: isComplete || false,
+      stage: stage || constant.STAGE.PRODUCT,
+      creatAt: createAt || '',
+      updateAt: updateAt || '',
+      dataOneSignal: dataOneSignal || {},
+      dataSellsuki: dataSellsuki || {}
     }
+    console.log('>>>>>', data.stage)
+
+    return data
   }
 }

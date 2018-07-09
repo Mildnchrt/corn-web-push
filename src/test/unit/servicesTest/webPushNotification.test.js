@@ -19,6 +19,19 @@ describe('describe webPushnotification endpoint', () => {
   })
 
   it ('sent null data to change data format', () => {
+    
+    let input = {
+      storeId: '',
+      playerId: '',
+      isAllow: null,
+      isComplete: null,
+      stage: '',
+      creatAt: '',
+      updateAt: '',
+      dataOneSignal: null,
+      dataSellsuki: null
+    }
+
     let output = {
       storeId: '',
       playerId: '',
@@ -29,12 +42,13 @@ describe('describe webPushnotification endpoint', () => {
       updateAt: '',
       dataOneSignal: {},
       dataSellsuki: {}
-    }    
-    expect(webPushNotification.changeDataFormat('', '', null, null, '', '', '', null, null)).toEqual(output)
+    }
+
+    expect(webPushNotification.changeDataFormat(input)).toEqual(output)
   })
 
-  it ('sent data to change data format', () => {
-    let data = webPushNotification.changeDataFormat('01', '01', false, false, '', 'today', '', {test: 'test'}, {test: 'test'})
+  it.only('sent data to change data format', () => {
+    let data = webPushNotification.changeDataFormat('01', '01', false, false, '', 'today', '', null, {test: 'test'})
     let output = {
       storeId: '01',
       playerId: '01',
@@ -43,9 +57,10 @@ describe('describe webPushnotification endpoint', () => {
       stage: 'product',
       creatAt: 'today',
       updateAt: '',
-      dataOneSignal: {test: 'test'},
+      dataOneSignal: {},
       dataSellsuki: {test: 'test'}
     }
+    console.log('>>>> 1', data)
     expect(data).toEqual(output)
   })
 

@@ -1,4 +1,4 @@
-const { cronController, uiController, createUserToFirestore } = require('../controllers/web-noti')
+const { cronController, uiController, registerController } = require('../controllers/web-noti')
 
 module.exports = {
   webPushNotification: [
@@ -19,7 +19,7 @@ module.exports = {
     {
       methods: 'GET',
       path: '/:storeid/:playerid/:allow',
-      controller: createUserToFirestore
+      controller: registerController
     }
   ]
 }

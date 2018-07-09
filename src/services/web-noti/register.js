@@ -5,7 +5,7 @@ const webPushNotification  = require('./webPushNotification')
 
 module.exports = {
   checkPlayerFirestore: async function (storeId) {
-    const result = await getUserByStoreId.getUserByStoreId(storeId)
+    let result = await getUserByStoreId.getUserByStoreId(storeId)
     if (!result) {
       return false
     } else { 
@@ -16,9 +16,10 @@ module.exports = {
   createNewUser: async function (storeId, playerId, isAllow, updateTime) {
     let promiseOneSignal = getDevice.getDevice(playerId)
     let promiseSellsuki = getUser.getUser(storeId)
-    let userOneSignal = await  promiseOneSignal
+    let userOneSignal = await promiseOneSignal
     let userSellsuki = await promiseSellsuki
-    let data = webPushNotification.transferData(
+
+    let data = webPushNotification.changeDataFormat(
       storeId, 
       playerId, 
       isAllow, 
@@ -27,11 +28,10 @@ module.exports = {
       updateTime, 
       updateTime, 
       userOneSignal, 
-      //userSellsuki.data.results.results[0]
       userSellsuki.data.results
     )
 
-    const resCreateData = await createData.createData(storeId, data)
-    return resCreateData
+    let responseCreateData = await createData.createData(storeId, data)
+    return responseCreateData
   }
 }

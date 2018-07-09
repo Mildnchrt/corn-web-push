@@ -1,22 +1,22 @@
-// const { Bill } = require('../../response/models')
 const { webPushNotification } = require('../../services/web-noti')
 const { getUserByStoreId } = require('../../library/firestore')
 
-module.exports = async function (req, res) {
-  const usersNotDone = await webPushNotification.getUserNotComplete()
-  const userCollections = await webPushNotification.setDataStoreCollections(usersNotDone)
-  const usersSellsuki = await webPushNotification.getUserFromSellsuki(userCollections.storeIds)
+module.exports = async function (request, response) {
+  let usersNotDone = await webPushNotification.getUserNotComplete()
+  let usersCollection = await webPushNotification.setDataStoreCollections(usersNotDone)
+  let usersSellsuki = await webPushNotification.getUserFromSellsuki(usersCollection.storeIds)
 
-  usersSellsuki.results.forEach((user, i) => {
-    var stage = webPushNotification.getStage(user)
-    var updateTime = new Date()
-    webPushNotification.updateDataToFireStore(userCollections.data[i], user, stage, updateTime)
+  usersSellsuki.results.forEach((user, index) => {
+    let stage = webPushNotification.getStage(user)
+    let updateTime = new Date()
+    webPushNotification.updateDataToFirestore(usersCollection.data[index], user, stage, updateTime)
   })
   
   usersNotDone = await webPushNotification.getUserNotComplete()
   usersNotDone.forEach((user) => {
     webPushNotification.pushNotification(user)
   })
+
   return {
     success: 1, 
     message: 'success'

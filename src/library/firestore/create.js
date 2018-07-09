@@ -17,7 +17,7 @@ module.exports = {
       console.error(e)
       throw e
     }
-  
+    
     return result
   }
 }

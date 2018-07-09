@@ -1,8 +1,10 @@
-const { createUserToFirestore } = require('../../../controllers/web-noti')
+const { registerController } = require('../../../controllers/web-noti')
 const { register } = require('../../../services/web-noti/')
+
 register.checkPlayerFirestore = jest.fn().mockReturnValueOnce(true).mockReturnValue(false)
 register.createNewUser = jest.fn().mockReturnValue('success')
-let req = {
+
+let request = {
  params: {
   storeid: '1',
   playerid: '5e094f14-fd88-493b-a2a3-ea09bb69f1b1',
@@ -10,24 +12,25 @@ let req = {
  }
 }
 
-let res = {
+let response = {
  send: function (text) { return text }
 }
 
-describe('register endpoint', async () => {
+describe('describe controller/register endpoint', async () => {
 
- it('test alreadyHave in Firestore', async () => { 
-  const result = await createUserToFirestore(req, res)
-  expect(register.createNewUser.mock.calls.length).toBe(0)
-  expect(register.checkPlayerFirestore.mock.calls.length).toBe(1)
-  expect(result).toBe('alreadyHave')  
+  it ('already have user in Firestore', async () => { 
+    const result = await registerController(request, response)
+
+    expect(register.createNewUser.mock.calls.length).toBe(0)
+    expect(register.checkPlayerFirestore.mock.calls.length).toBe(1)
+    expect(result).toBe('alreadyHaveUser')  
   })
 
- it('test createNewUse to firestore', async () => {
-  const result = await createUserToFirestore(req, res)
-  expect(register.checkPlayerFirestore.mock.calls.length).toBe(2)
-  expect(register.createNewUser.mock.calls.length).toBe(1)
-  expect(result).toBe('success')  
- })
+  it ('create new user to Firestore', async () => {
+    const result = await registerController(request, response)
 
+    expect(register.checkPlayerFirestore.mock.calls.length).toBe(2)
+    expect(register.createNewUser.mock.calls.length).toBe(1)
+    expect(result).toBe('success')  
+  })
 })

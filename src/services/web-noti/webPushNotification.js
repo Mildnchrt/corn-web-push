@@ -54,14 +54,14 @@ module.exports = {
     return stage
   },
 
-  updateDataToFireStore: function (userFirestore, userSellsuki, stage, updateTime) {
+  updateDataToFirestore: function (userFirestore, userSellsuki, stage, updateTime) {
     let isComplete = false
     if (stage === '') {
       stage = constant.STAGE.SHIPPING
       isComplete = true
     }
     
-    let transferData = this.transferData(
+    let data = this.changeDataFormat(
       userSellsuki.store_id, 
       userFirestore.playerId, 
       userFirestore.isAllow, 
@@ -73,7 +73,7 @@ module.exports = {
       userSellsuki
     )
     
-    updateData(transferData.storeId, transferData)
+    updateData(data.storeId, data)
   },
 
   pushNotification: function (user) {
@@ -82,14 +82,14 @@ module.exports = {
     
     if (user.dataOneSignal && user.dataOneSignal.language === 'th') {
       if (user.stage === constant.STAGE.PRODUCT) {
-        heading = 'อยากเริ่มขาย ต้องเพิ่มสินค้าก่อนนะ!'
-        content = 'เริ่มการขายผ่าน Sellsuki โดยการเพิ่มสินค้าในสต๊อกสินค้า'
+        heading = 'มาเริ่มสร้างสินค้าชิ้นแรก บนร้านค้าของคุณกัน!'
+        content = 'เพิ่มสินค้าในระบบ Sellsuki เพื่อเริ่มการขายบนร้านค้าของคุณ'
       } else if (user.stage === constant.STAGE.SHIPPING) {
-        heading = 'เพิ่มช่องทางชำระเงินสำหรับลูกค้าหรือยัง?'
-        content = 'เพิ่มบัญชีธนาคารหรือช่องทางอื่นๆ เพื่อรับชำระเงินจากลูกค้าหลังยืนยันออเดอร์'
+        heading = 'สร้างวิธีจัดส่งสินค้าตอนนี้ เพื่อเริ่มการขายบนร้านค้าของคุณ!'
+        content = 'เพิ่มวิธีจัดส่งสินค้าพร้อมค่าจัดส่ง ให้ลูกค้าของคุณมีทางเลือกในการรับของ'
       } else if (user.stage === constant.STAGE.PAYMENT) {
-        heading = 'อย่าลืมเพิ่มวิธีจัดส่งและค่าส่งสินค้าด้วยนะ'
-        content = 'เพิ่มวิธีจัดส่งสินค้าพร้อมค่าจัดส่งแบบต่างๆ ให้ลูกค้าเลือกรับของได้ตามสะดวก'
+        heading = 'ดูเหมือนว่าร้านค้าของคุณยังไม่มีช่องทางการชำระเงินนะ!'
+        content = 'เพิ่มช่องทางชำระเงิน ช่วยให้ลูกค้าชำระเงินค่าสินค้าได้อย่างง่ายดาย'
       }
     } else {
       if (user.stage === constant.STAGE.PRODUCT) {
@@ -104,7 +104,7 @@ module.exports = {
       }
     }
 
-    var message = {
+    let message = {
       app_id: constant.ONESIGNAL.APP_ID,
       headings: { 'en': heading },
       contents: { 'en': content },
@@ -112,12 +112,11 @@ module.exports = {
     }
 
     sendNotification(message)
-
     return 'success: 1'
   },
-
-  transferData: function(storeId, playerId, isAllow, isComplete, stage, creatAt, updateAt, dataOneSignal, dataSellsuki) {
-    return transferedData = {
+  
+  changeDataFormat: function(storeId, playerId, isAllow, isComplete, stage, creatAt, updateAt, dataOneSignal, dataSellsuki) {
+    return data = {
       storeId: (storeId !== '' && storeId !== undefined ? storeId : ''),
       playerId: (playerId !== null && playerId !== undefined ? playerId : ''),
       isAllow: (isAllow !== null && isAllow !== undefined ? isAllow : false),

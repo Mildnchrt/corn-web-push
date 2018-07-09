@@ -1,9 +1,9 @@
-let constant 
-let database 
-if (process.env.NODE_ENV==='production') {
+let constant, database 
+
+if (process.env.NODE_ENV === 'production') {
   constant = require('./production/constant')
   database = require('./production/firebase')
-} else if (process.env.NODE_ENV==='staging') {
+} else if (process.env.NODE_ENV === 'staging') {
   constant = require('./staging/constant')
   database = require('./staging/firebase')
 } else { 

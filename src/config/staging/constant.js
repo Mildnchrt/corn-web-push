@@ -1,4 +1,3 @@
-console.log('Hello Staging')
 module.exports = {
   STAGE: {
     PRODUCT: '77777777777777777777777',
@@ -12,5 +11,13 @@ module.exports = {
     HOST: 'onesignal.com',
     PATH: '/api/v1/notifications',
     PORT: 443
+  },
+  FIRESTORE: {
+    API_KEY: 'AIzaSyCWJOdnyasNUL7xAWi83WDHihsKj92N7R8',
+    AUTH_DOMIN: 'notification-7e499.firebaseapp.com',
+    DATABASE_URL: 'https://notification-7e499.firebaseio.com',
+    PROJECT_ID: 'notification-7e499',
+    STORAGE_BUCKET: 'notification-7e499.appspot.com',
+    MESSAGING_SENDER_ID: '400202276323'
   }
 }

@@ -14,21 +14,25 @@ module.exports = {
     var isFirst = true
     var userCollections = {}
     var userData = []
-
-    userNotDone.forEach((collections) => {
-      if (isFirst) {
-        str += collections.data().storeId
-        isFirst = false
-      } else {
-        str += ',' + collections.data().storeId
+    
+    if (Object.keys(userNotDone).length !== 0) {
+      userNotDone.forEach((collections) => {
+        if (isFirst) {
+          str += collections.data().storeId
+          isFirst = false
+        } else {
+          str += ',' + collections.data().storeId
+        }
+        userData.push(collections.data())
+      })
+      userCollections = {
+        storeIds: str,
+        data: userData
       }
-      userData.push(collections.data())
-    })
-
-    userCollections = {
-      storeIds: str,
-      data: userData
+    } else {
+      return {}
     }
+
     return userCollections
   },
 

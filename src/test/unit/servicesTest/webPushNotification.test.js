@@ -56,5 +56,8 @@ describe('describe webPushnotification endpoint', () => {
     let a = webPushNotification.pushNotification(user)
     expect(libOnesignal.sendNotification.mock.calls.length).toBe(1)
   })
-
+  it('setDataStoreCollections', async () => {
+    let userNotDone = {}
+    expect(webPushNotification.setDataStoreCollections(userNotDone)).toEqual({})
+  })
 })

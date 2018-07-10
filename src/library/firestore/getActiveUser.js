@@ -1,7 +1,7 @@
 const userRef = require('../../config')
 
 module.exports = {
-  async getActiveUser() {
+  getActiveUser() {
     return new Promise((resolve, reject) => {
       resolve(
         userRef.database

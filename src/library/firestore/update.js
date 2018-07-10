@@ -6,5 +6,10 @@ module.exports = {
       .init()
       .doc(storeId)
       .update(data)
+
+    return {
+      success: 1, 
+      message: 'updated success'
+    }
   }
 }

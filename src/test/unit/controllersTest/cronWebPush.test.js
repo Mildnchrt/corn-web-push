@@ -1,4 +1,3 @@
-// const firebase = require('firebase')
 const { webPushNotification } = require('../../../services/web-noti')
 
 const userNotDone = [

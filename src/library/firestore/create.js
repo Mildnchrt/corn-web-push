@@ -19,8 +19,7 @@ module.exports = {
     // }
     // return result
 
-    try {
-      userRef.database
+    return userRef.database
         .init()
         .doc(storeId)
         .set(data)
@@ -30,15 +29,5 @@ module.exports = {
         .catch(function () {
           return 'unsuccess'
         })
-    } catch (err) {
-      console.error(err)
-    }
-
-    return {
-      success: 1, 
-      message: 'created success'
-    }
-  }
+      }
 }
-
-

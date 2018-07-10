@@ -1,10 +1,11 @@
 const axios = require('axios')
+const { constant } = require('../../config')
 
 module.exports = {
   async getUser (storeId) {
-    const { data } = await axios.get('http://192.168.1.254:8003/store/get-store-notification?store_ids[]=' + storeId)
+    const { data } = await axios.get(constant.MOCK.SELLSUKI_URL + storeId)
       .catch((e) => { console.log(e.stack) })
-
-    return data
+    console.log('# getUser #', data.results)
+    return data.results
   }
 }

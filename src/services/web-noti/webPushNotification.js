@@ -4,8 +4,8 @@ const { sendNotification }  = require('../../library/onesignal')
 const { constant } = require('../../config')
 
 module.exports = {
-  getUserNotComplete: function () {
-    var activeUserData = getActiveUser()
+  getUserNotComplete: async function () {
+    var activeUserData = await getActiveUser()
     return activeUserData
   },
 
@@ -38,10 +38,10 @@ module.exports = {
 
   getUserFromSellsuki: async function (store) {
     var user = await getUser(store)
-    return user.data.results
+    return user
   },
 
-  getStage: function (user) {
+  getUserStage: function (user) {
     let stage = ''
     if (user.count_product <= 1) {
       stage = constant.STAGE.PRODUCT

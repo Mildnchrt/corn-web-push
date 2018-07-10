@@ -6,7 +6,5 @@ module.exports = {
     .init()
     .doc(storeId)
     .delete()
-    
-  return {}
   }
 }

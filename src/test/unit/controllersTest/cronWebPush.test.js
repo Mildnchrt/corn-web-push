@@ -1,8 +1,8 @@
 const { webPushNotification } = require('../../../services/web-noti')
 
 const userNotDone = [
-  {storeId: '1'}, 
-  {storeId: '2'}
+  { data: jest.fn().mockReturnValue({ storeId: '1' }) },
+  { data: jest.fn().mockReturnValue({ storeId: '2' }) }
 ]
 let dataStore = {
   storeIds: '1,2', 
@@ -32,7 +32,7 @@ const userSellsuki = {
 
 webPushNotification.getUserNotComplete = jest.fn().mockReturnValue(userNotDone)
 webPushNotification.setDataStoreCollections = jest.fn().mockReturnValue(dataStore)
-webPushNotification.getUserFromSellsuki = jest.fn().mockReturnValue(userSellsuki)
+webPushNotification.getUserFromSellsuki = jest.fn().mockReturnValue(userSellsuki.results)
 webPushNotification.updateDataToFirestore = jest.fn()
 webPushNotification.getUserStage = jest.fn()
 webPushNotification.pushNotification = jest.fn()

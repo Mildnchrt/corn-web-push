@@ -11,15 +11,15 @@ libFirestore.updateData = jest.fn()
 const { webPushNotification } = require('../../../services/web-noti')
 
 describe('describe webPushnotification endpoint', () => {
-  it ('get user stage', () => {
+  it ('get user stage', async () => {
     let user = {
       count_product: 1
     }
-    expect(webPushNotification.getStage(user)).toEqual('product')
+    console.log('#', user)
+    expect(webPushNotification.getUserStage(user)).toEqual('product')
   })
 
   it ('sent null data to change data format', () => {
-    
     let input = {
       storeId: '',
       playerId: '',
@@ -47,7 +47,7 @@ describe('describe webPushnotification endpoint', () => {
     expect(webPushNotification.changeDataFormat(input)).toEqual(output)
   })
 
-  it.only('sent data to change data format', () => {
+  it ('sent data to change data format', () => {
     let data = webPushNotification.changeDataFormat('01', '01', false, false, '', 'today', '', null, {test: 'test'})
     let output = {
       storeId: '01',
@@ -93,8 +93,29 @@ describe('describe webPushnotification endpoint', () => {
     expect(libOnesignal.sendNotification.mock.calls.length).toBe(1)
   })
 
-  it ('set data store collections', async () => {
+  it ('set data store collections is empty', async () => {
     let userNotDone = {}
     expect(webPushNotification.setDataStoreCollections(userNotDone)).toEqual({})
+  })
+
+  it ('set data store collections', async () => {
+    let userNotDone = [{
+      data: jest.fn().mockReturnValue(
+        {storeId: '1'}
+      )
+    },
+    {
+      data: jest.fn().mockReturnValue(
+        {storeId: '2'}
+      )
+    }]
+
+    let output = {
+      'data': 
+        [{'storeId': '1'}, 
+        {'storeId': '2'}], 
+      'storeIds': '1,2'
+    }
+    expect(webPushNotification.setDataStoreCollections(userNotDone)).toEqual(output)
   })
 })

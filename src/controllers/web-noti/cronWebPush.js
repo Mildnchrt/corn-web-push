@@ -1,33 +1,24 @@
 const { webPushNotification } = require('../../services/web-noti')
 const { getUserByStoreId } = require('../../library/firestore')
 
-const cronController  = async (request, response)  => {
-  let usersNotDone = await webPushNotification.getUserNotComplete()
-  let usersCollection = await webPushNotification.setDataStoreCollections(usersNotDone)
+module.exports = async function (request, response) {
+  let usersNotDone = webPushNotification.getUserNotComplete()
+  let usersCollection = webPushNotification.setDataStoreCollections(usersNotDone)
   let usersSellsuki = await webPushNotification.getUserFromSellsuki(usersCollection.storeIds)
 
-
-  usersSellsuki.results.forEach(  (user, index) => {
-  //  console.log("user", webPushNotification.getUserStage)
-    let stage =   webPushNotification.getUserStage(user)
-    console.log("stage", stage)
+  usersSellsuki.results.forEach((user, index) => {
+    let stage = webPushNotification.getUserStage(user)
     let updateTime = new Date()
-     webPushNotification.updateDataToFirestore(usersCollection.data[index], user, stage, updateTime)
+    webPushNotification.updateDataToFirestore(usersCollection.data[index], user, stage, updateTime)
   })
   
-  usersNotDone =  webPushNotification.getUserNotComplete()
+  usersNotDone = await webPushNotification.getUserNotComplete()
   usersNotDone.forEach((user) => {
-    // console.log('usersNotDone', webPushNotification.pushNotification)
-     webPushNotification.pushNotification(user)
-    
+    webPushNotification.pushNotification(user)
   })
 
   return {
     success: 1, 
     message: 'success'
   }
-}
-
-module.exports = {
-  cronController
 }

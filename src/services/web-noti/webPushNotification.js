@@ -4,45 +4,39 @@ const { sendNotification }  = require('../../library/onesignal')
 const { constant } = require('../../config')
 
 module.exports = {
-  getUserNotComplete:  function () {
-    // var activeUserData = await getActiveUser()
-    return true
+  getUserNotComplete: async function () {
+    let activeUserData = await getActiveUser()
+    return activeUserData
   },
 
   setDataStoreCollections: function (userNotDone) {
-    var str = ''
-    var isFirst = true
-    var userCollections = {}
-    var userData = []
-    
-    if (Object.keys(userNotDone).length !== 0) {
-      userNotDone.forEach((collections) => {
-        if (isFirst) {
-          str += collections.data().storeId
-          isFirst = false
-        } else {
-          str += ',' + collections.data().storeId
-        }
+    let userCollections = {}
+    if (userNotDone.length > 0) {
+      let userData = []
+      let str = userNotDone.map((collections) => {
         userData.push(collections.data())
-      })
+        return collections.data().storeId
+      }).join()
       userCollections = {
         storeIds: str,
         data: userData
       }
-    } else {
-      return {}
-    }
-
+    } 
+    // console.log('userCollections', userCollections)
     return userCollections
   },
 
   getUserFromSellsuki: async function (store) {
-    var user = await getUser(store)
-    return user.data.results
+    let user = await getUser(store)
+    try {
+      return user.data.results
+    } catch (error) {
+      console.log(error)
+    }
   },
 
-  getUserStage: async function (user) {
-    console.log("useruseruser", user)
+  getUserStage: function (user) {
+    // console.log("useruseruser", user)
     let stage = ''
     if (user.count_product <= 1) {
       stage = constant.STAGE.PRODUCT

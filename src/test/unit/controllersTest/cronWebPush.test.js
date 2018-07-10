@@ -1,4 +1,3 @@
-// const firebase = require('firebase')
 const { webPushNotification } = require('../../../services/web-noti')
 
 const userNotDone = [
@@ -35,7 +34,6 @@ const userSellsuki = {
   ]
 }
 webPushNotification.getUserFromSellsuki = jest.fn().mockReturnValue(userSellsuki)
-// --- mock function calling count services 
 webPushNotification.updateDataToFirestore = jest.fn()
 webPushNotification.getUserStage = jest.fn()
 webPushNotification.pushNotification = jest.fn()
@@ -48,7 +46,6 @@ describe('describe cronWebPush endpoint', () => {
     expect(webPushNotification.getUserNotComplete.mock.calls.length).toBe(2)
     expect(webPushNotification.setDataStoreCollections.mock.calls.length).toBe(1)
     expect(webPushNotification.getUserFromSellsuki.mock.calls.length).toBe(1)
-    // --- 
     expect(webPushNotification.getUserStage.mock.calls.length).toBe(2)
     expect(webPushNotification.pushNotification.mock.calls.length).toBe(2)
     expect(res).toEqual({

@@ -12,7 +12,7 @@ module.exports = {
   setDataStoreCollections: function (userNotDone) {
     let userCollections = {}
 
-    if (userNotDone) {      
+    if (userNotDone.docs.length > 0) {      
       let userData = []
       let str = userNotDone.docs.map((collections) => {
         userData.push(collections.data())

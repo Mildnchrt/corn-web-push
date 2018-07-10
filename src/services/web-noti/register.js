@@ -18,18 +18,19 @@ module.exports = {
     let promiseSellsuki = getUser.getUser(storeId)
     let userOneSignal = await promiseOneSignal
     let userSellsuki = await promiseSellsuki
+    let user = {
+      storeId: storeId,
+      playerId: playerId,
+      isAllow: isAllow,
+      isComplete: '',
+      stage: '',
+      createAt: updateTime,
+      updateAt: updateTime,
+      dataOneSignal: userOneSignal,
+      dataSellsuki: userSellsuki.data.results
+    }
 
-    let data = webPushNotification.changeDataFormat(
-      storeId, 
-      playerId, 
-      isAllow, 
-      '', 
-      '', 
-      updateTime, 
-      updateTime, 
-      userOneSignal, 
-      userSellsuki.data.results
-    )
+    let data = webPushNotification.changeDataFormat(user)
 
     let responseCreateData = await createData.createData(storeId, data)
     return responseCreateData

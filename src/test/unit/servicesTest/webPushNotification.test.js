@@ -26,7 +26,7 @@ describe('describe webPushnotification endpoint', () => {
       isAllow: null,
       isComplete: null,
       stage: '',
-      creatAt: '',
+      createAt: '',
       updateAt: '',
       dataOneSignal: null,
       dataSellsuki: null
@@ -38,7 +38,7 @@ describe('describe webPushnotification endpoint', () => {
       isAllow: false,
       isComplete: false,
       stage: 'product',
-      creatAt: '',
+      createAt: '',
       updateAt: '',
       dataOneSignal: {},
       dataSellsuki: {}
@@ -48,20 +48,30 @@ describe('describe webPushnotification endpoint', () => {
   })
 
   it ('sent data to change data format', () => {
-    let data = webPushNotification.changeDataFormat('01', '01', false, false, '', 'today', '', null, {test: 'test'})
+    let input = {
+      storeId: '01', 
+      playerId: '01', 
+      isAllow: false, 
+      isComplete: false, 
+      stage: '', 
+      createAt: 'today', 
+      updateAt: '', 
+      datOneSignale: null, 
+      dataSellsuki: {test: 'test'}
+    }
     let output = {
       storeId: '01',
       playerId: '01',
       isAllow: false,
       isComplete: false,
       stage: 'product',
-      creatAt: 'today',
+      createAt: 'today',
       updateAt: '',
       dataOneSignal: {},
       dataSellsuki: {test: 'test'}
     }
-    console.log('>>>> 1', data)
-    expect(data).toEqual(output)
+
+    expect(webPushNotification.changeDataFormat(input)).toEqual(output)
   })
 
   it ('get user from sellsuki data', async () => {

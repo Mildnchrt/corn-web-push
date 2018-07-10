@@ -22,7 +22,6 @@ module.exports = {
         data: userData
       }
     } 
-    // console.log('userCollections', userCollections)
     return userCollections
   },
 
@@ -36,7 +35,6 @@ module.exports = {
   },
 
   getUserStage: function (user) {
-    // console.log("useruseruser", user)
     let stage = ''
     if (user.count_product <= 1) {
       stage = constant.STAGE.PRODUCT
@@ -45,7 +43,6 @@ module.exports = {
     } else if (user.count_store_shipping_type <= 1) {
       stage = constant.STAGE.SHIPPING
     }
-    console.log("stage stage", stage)
     return stage
   },
 
@@ -55,20 +52,20 @@ module.exports = {
       stage = constant.STAGE.SHIPPING
       isComplete = true
     }
-    
-    let data = this.changeDataFormat(
-      userSellsuki.store_id, 
-      userFirestore.playerId, 
-      userFirestore.isAllow, 
-      isComplete, 
-      stage,
-      userFirestore.creatAt,
-      updateTime,
-      userFirestore.dataOneSignal,
-      userSellsuki
-    )
-    // console.log(data)
-     updateData(data.storeId, data)
+    let input = {
+      storeId: userSellsuki.store_id, 
+      playerId: userFirestore.playerId, 
+      isAllow: userFirestore.isAllow, 
+      isComplete: isComplete, 
+      stage: stage,
+      createAt: userFirestore.createAt,
+      updateAt: updateTime,
+      dataOneSignal: userFirestore.dataOneSignal,
+      userSellsuki: userSellsuki
+    }
+    let data = this.changeDataFormat(input)
+
+    updateData(data.storeId, data)
   },
 
   pushNotification: function (user) {
@@ -110,19 +107,18 @@ module.exports = {
     return 'success: 1'
   },
   
-  changeDataFormat: function(storeId, playerId, isAllow, isComplete, stage, createAt, updateAt, dataOneSignal, dataSellsuki) {
+  changeDataFormat: function(user) {
     let data = {
-      storeId: storeId || '',
-      playerId: playerId || '',
-      isAllow: isAllow || false,
-      isComplete: isComplete || false,
-      stage: stage || constant.STAGE.PRODUCT,
-      creatAt: createAt || '',
-      updateAt: updateAt || '',
-      dataOneSignal: dataOneSignal || {},
-      dataSellsuki: dataSellsuki || {}
+      storeId: ('storeId' in user && user.storeId) ? user.storeId : '',
+      playerId: ('playerId' in user && user.playerId) ? user.playerId : '',
+      isAllow: ('isAllow' in user && user.isAllow) ? user.isAllow : false,
+      isComplete: ('isComplete' in user && user.isComplete) ? user.isComplete : false,
+      stage: ('stage' in user && user.stage) ? user.stage : constant.STAGE.PRODUCT,
+      createAt: ('createAt' in user && user.createAt) ? user.createAt : '',
+      updateAt: ('updateAt' in user && user.updateAt) ? user.updateAt : '',
+      dataOneSignal: ('dataOneSignal' in user && user.dataOneSignal) ? user.dataOneSignal : {},
+      dataSellsuki: ('dataSellsuki' in user && user.dataSellsuki) ? user.dataSellsuki : {},
     }
-    console.log('>>>>>', data.stage)
 
     return data
   }

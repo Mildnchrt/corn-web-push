@@ -5,40 +5,36 @@ const { constant } = require('../../config')
 
 module.exports = {
   getUserNotComplete: async function () {
-    var activeUserData = await getActiveUser()
+    let activeUserData = await getActiveUser()
     return activeUserData
   },
 
   setDataStoreCollections: function (userNotDone) {
-    var str = ''
-    var isFirst = true
-    var userCollections = {}
-    var userData = []
-    
-    if (Object.keys(userNotDone).length !== 0) {
-      userNotDone.forEach((collections) => {
-        if (isFirst) {
-          str += collections.data().storeId
-          isFirst = false
-        } else {
-          str += ',' + collections.data().storeId
-        }
+    let userCollections = {}
+
+    if (userNotDone) {      
+      let userData = []
+      let str = userNotDone.docs.map((collections) => {
         userData.push(collections.data())
-      })
+        return collections.data().storeId
+      }).join()
+
       userCollections = {
         storeIds: str,
         data: userData
       }
-    } else {
-      return {}
-    }
-
+    } 
     return userCollections
   },
 
   getUserFromSellsuki: async function (store) {
-    var user = await getUser(store)
-    return user
+    let user = await getUser(store)
+
+    try {
+      return user.results
+    } catch (error) {
+      console.log(error)
+    }
   },
 
   getUserStage: function (user) {
@@ -50,29 +46,28 @@ module.exports = {
     } else if (user.count_store_shipping_type <= 1) {
       stage = constant.STAGE.SHIPPING
     }
-
     return stage
   },
 
-  updateDataToFirestore: function (userFirestore, userSellsuki, stage, updateTime) {
+  updateDataToFirestore:  function (userFirestore, userSellsuki, stage, updateTime) {
     let isComplete = false
     if (stage === '') {
       stage = constant.STAGE.SHIPPING
       isComplete = true
     }
-    
-    let data = this.changeDataFormat(
-      userSellsuki.store_id, 
-      userFirestore.playerId, 
-      userFirestore.isAllow, 
-      isComplete, 
-      stage,
-      userFirestore.creatAt,
-      updateTime,
-      userFirestore.dataOneSignal,
-      userSellsuki
-    )
-    
+    let input = {
+      storeId: userSellsuki.store_id, 
+      playerId: userFirestore.playerId, 
+      isAllow: userFirestore.isAllow, 
+      isComplete: isComplete, 
+      stage: stage,
+      createAt: userFirestore.createAt,
+      updateAt: updateTime,
+      dataOneSignal: userFirestore.dataOneSignal,
+      userSellsuki: userSellsuki
+    }
+    let data = this.changeDataFormat(input)
+
     updateData(data.storeId, data)
   },
 
@@ -115,17 +110,19 @@ module.exports = {
     return 'success: 1'
   },
   
-  changeDataFormat: function(storeId, playerId, isAllow, isComplete, stage, creatAt, updateAt, dataOneSignal, dataSellsuki) {
-    return data = {
-      storeId: (storeId !== '' && storeId !== undefined ? storeId : ''),
-      playerId: (playerId !== null && playerId !== undefined ? playerId : ''),
-      isAllow: (isAllow !== null && isAllow !== undefined ? isAllow : false),
-      isComplete: (isComplete !== null ? isComplete : false),
-      stage: (stage !== '' ? stage : constant.STAGE.PRODUCT),
-      creatAt: (creatAt !== undefined ? creatAt : ''),
-      updateAt: (updateAt !== undefined ? updateAt : ''),
-      dataOneSignal: (dataOneSignal !== null && dataOneSignal !== undefined ? dataOneSignal : {}),
-      dataSellsuki: (dataSellsuki !== null ? dataSellsuki : {})
+  changeDataFormat: function(user) {
+    let data = {
+      storeId: ('storeId' in user && user.storeId) ? user.storeId : '',
+      playerId: ('playerId' in user && user.playerId) ? user.playerId : '',
+      isAllow: ('isAllow' in user && user.isAllow) ? user.isAllow : false,
+      isComplete: ('isComplete' in user && user.isComplete) ? user.isComplete : false,
+      stage: ('stage' in user && user.stage) ? user.stage : constant.STAGE.PRODUCT,
+      createAt: ('createAt' in user && user.createAt) ? user.createAt : '',
+      updateAt: ('updateAt' in user && user.updateAt) ? user.updateAt : '',
+      dataOneSignal: ('dataOneSignal' in user && user.dataOneSignal) ? user.dataOneSignal : {},
+      dataSellsuki: ('dataSellsuki' in user && user.dataSellsuki) ? user.dataSellsuki : {},
     }
+
+    return data
   }
 }

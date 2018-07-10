@@ -3,12 +3,13 @@ const { getUserByStoreId } = require('../../library/firestore')
 const { getUser } = require('../../library/sellsuki')
 
 module.exports = async function (request, response) {
-  let usersNotDone = await webPushNotification.getUserNotComplete()
+  let usersNotDone = await webPushNotification.getUserNotComplete()  
   let usersCollection = webPushNotification.setDataStoreCollections(usersNotDone)
   let usersSellsuki = await webPushNotification.getUserFromSellsuki(usersCollection.storeIds)
 
+
   usersSellsuki.forEach((user, index) => {
-    let stage = webPushNotification.getUserStage(user)    
+    let stage = webPushNotification.getUserStage(user)
     let updateTime = new Date()
     webPushNotification.updateDataToFirestore(usersCollection.data[index], user, stage, updateTime)
   })

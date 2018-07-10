@@ -5,7 +5,6 @@ module.exports = {
   async getUser (storeId) {
     const { data } = await axios.get(constant.MOCK.SELLSUKI_URL + storeId)
       .catch((e) => { console.log(e.stack) })
-    console.log('# getUser #', data.results)
-    return data.results
+    return data
   }
 }

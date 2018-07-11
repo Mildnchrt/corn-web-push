@@ -19,5 +19,8 @@ module.exports = {
     PROJECT_ID: 'notification-7e499',
     STORAGE_BUCKET: 'notification-7e499.appspot.com',
     MESSAGING_SENDER_ID: '400202276323'
+  },
+  MOCK: {
+    SELLSUKI_URL: 'http://192.168.1.254:8003/store/get-store-notification?store_ids[]='
   }
 }

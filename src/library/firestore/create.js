@@ -1,25 +1,33 @@
 const userRef = require('../../config')
 
 module.exports = {
-  async createData (storeId, data) {
-    let result = null
-    try {
-      result = await userRef.database
+  createData (storeId, data) {
+    // let result = null
+    // try {
+    //   result = userRef.database
+    //     .init()
+    //     .doc(storeId)
+    //     .set(data)
+    //     .then( function () {
+    //       return 'success'
+    //     }).catch( function () {
+    //       return 'unsuccess'
+    //     })
+    // } catch (e) {
+    //   console.error(e)
+    //   throw e
+    // }
+    // return result
+
+    return userRef.database
         .init()
         .doc(storeId)
         .set(data)
-        .then( function () {
+        .then(function () {
           return 'success'
-        }).catch( function () {
+        })
+        .catch(function () {
           return 'unsuccess'
         })
-    } catch (e) {
-      console.error(e)
-      throw e
-    }
-    
-    return result
-  }
+      }
 }
-
-

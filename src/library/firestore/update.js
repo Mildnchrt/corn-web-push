@@ -1,12 +1,15 @@
 const userRef = require('../../config')
 
 module.exports = {
-  async updateData (storeId, data) {
+  updateData (storeId, data) {
     userRef.database
       .init()
       .doc(storeId)
       .update(data)
-      
-    return {}
+
+    return {
+      success: 1, 
+      message: 'updated success'
+    }
   }
 }

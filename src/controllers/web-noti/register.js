@@ -10,6 +10,7 @@ module.exports = async function (request, response) {
       request.params.allow, 
       updateTime
     )
+    console.log('>>>', responseCreateData)
     return response.send(responseCreateData)
   } else {
     return response.send('alreadyHaveUser')

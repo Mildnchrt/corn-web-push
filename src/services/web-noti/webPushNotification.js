@@ -4,44 +4,40 @@ const { sendNotification }  = require('../../library/onesignal')
 const { constant } = require('../../config')
 
 module.exports = {
-  getUserNotComplete: function () {
-    var activeUserData = getActiveUser()
+  getUserNotComplete: async function () {
+    let activeUserData = await getActiveUser()
     return activeUserData
   },
 
   setDataStoreCollections: function (userNotDone) {
-    var str = ''
-    var isFirst = true
-    var userCollections = {}
-    var userData = []
-    
-    if (Object.keys(userNotDone).length !== 0) {
-      userNotDone.forEach((collections) => {
-        if (isFirst) {
-          str += collections.data().storeId
-          isFirst = false
-        } else {
-          str += ',' + collections.data().storeId
-        }
+    let userCollections = {}
+
+    if (userNotDone.docs.length > 0) {      
+      let userData = []
+      let str = userNotDone.docs.map((collections) => {
         userData.push(collections.data())
-      })
+        return collections.data().storeId
+      }).join()
+
       userCollections = {
         storeIds: str,
         data: userData
       }
-    } else {
-      return {}
-    }
-
+    } 
     return userCollections
   },
 
   getUserFromSellsuki: async function (store) {
-    var user = await getUser(store)
-    return user.data.results
+    let user = await getUser(store)
+
+    try {
+      return user.results
+    } catch (error) {
+      console.log(error)
+    }
   },
 
-  getStage: function (user) {
+  getUserStage: function (user) {
     let stage = ''
     if (user.count_product <= 1) {
       stage = constant.STAGE.PRODUCT
@@ -50,36 +46,35 @@ module.exports = {
     } else if (user.count_store_shipping_type <= 1) {
       stage = constant.STAGE.SHIPPING
     }
-
     return stage
   },
 
-  updateDataToFirestore: function (userFirestore, userSellsuki, stage, updateTime) {
+  updateDataToFirestore:  function (userFirestore, userSellsuki, stage, updateTime) {
     let isComplete = false
     if (stage === '') {
       stage = constant.STAGE.SHIPPING
       isComplete = true
     }
-    
-    let data = this.changeDataFormat(
-      userSellsuki.store_id, 
-      userFirestore.playerId, 
-      userFirestore.isAllow, 
-      isComplete, 
-      stage,
-      userFirestore.creatAt,
-      updateTime,
-      userFirestore.dataOneSignal,
-      userSellsuki
-    )
-    
+    let data = this.changeDataFormat({ 
+      storeId: userSellsuki.store_id, 
+      playerId: userFirestore.playerId, 
+      isAllow: userFirestore.isAllow, 
+      isComplete: isComplete, 
+      stage: stage,
+      createAt: userFirestore.createAt,
+      updateAt: updateTime,
+      dataOneSignal: userFirestore.dataOneSignal,
+      userSellsuki: userSellsuki 
+    })
+
     updateData(data.storeId, data)
   },
 
   pushNotification: function (user) {
     let heading, content
     // let url = ''
-    
+    let a = {}
+    a[constant.STAGE.PRODUCT]
     if (user.dataOneSignal && user.dataOneSignal.language === 'th') {
       if (user.stage === constant.STAGE.PRODUCT) {
         heading = 'มาเริ่มสร้างสินค้าชิ้นแรก บนร้านค้าของคุณกัน!'
@@ -115,17 +110,17 @@ module.exports = {
     return 'success: 1'
   },
   
-  changeDataFormat: function(storeId, playerId, isAllow, isComplete, stage, creatAt, updateAt, dataOneSignal, dataSellsuki) {
-    return data = {
-      storeId: (storeId !== '' && storeId !== undefined ? storeId : ''),
-      playerId: (playerId !== null && playerId !== undefined ? playerId : ''),
-      isAllow: (isAllow !== null && isAllow !== undefined ? isAllow : false),
-      isComplete: (isComplete !== null ? isComplete : false),
-      stage: (stage !== '' ? stage : constant.STAGE.PRODUCT),
-      creatAt: (creatAt !== undefined ? creatAt : ''),
-      updateAt: (updateAt !== undefined ? updateAt : ''),
-      dataOneSignal: (dataOneSignal !== null && dataOneSignal !== undefined ? dataOneSignal : {}),
-      dataSellsuki: (dataSellsuki !== null ? dataSellsuki : {})
+  changeDataFormat: function(user) {
+    return {
+      storeId: user && user.storeId || '',
+      playerId: user && user.playerId || '',
+      isAllow: user && user.isAllow || false,
+      isComplete: user && user.isComplete || false,
+      stage: user && user.stage || constant.STAGE.PRODUCT,
+      createAt: user && user.createAt || '',
+      updateAt: user && user.updateAt || '',
+      dataOneSignal: user && user.dataOneSignal || {},
+      dataSellsuki: user && user.dataSellsuki || {}
     }
   }
 }

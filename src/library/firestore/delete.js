@@ -1,12 +1,15 @@
 const userRef = require('../../config')
 
 module.exports = {
-  async deleteData (storeId) {
-  userRef.database
-    .init()
-    .doc(storeId)
-    .delete()
-    
-  return {}
+  deleteData (storeId) {
+    userRef.database
+      .init()
+      .doc(storeId)
+      .delete()
+      
+    return {
+      success: 1, 
+      message: 'deleted success'
+    }
   }
 }

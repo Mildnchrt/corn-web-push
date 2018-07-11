@@ -4,9 +4,8 @@ const libOnesignal = require('../../../library/onesignal')
 const libSellsuki = require('../../../library/sellsuki')
 const webPushNotification  = require('../../../services/web-noti/webPushNotification')
 
-//mock return value function
-libFirestore.getUserByStoreId.getUserByStoreId = jest.fn().mockReturnValueOnce(false).mockResolvedValue({ doc: { data: {} } })
-libFirestore.createData.createData = jest.fn().mockReturnValue('success')
+libFirestore.getUserByStoreId = jest.fn().mockReturnValueOnce(false).mockResolvedValue({ doc: { data: {} } })
+libFirestore.createData = jest.fn().mockReturnValue('success')
 libOnesignal.getDevice = jest.fn().mockReturnValue({ response: { data: {} } })
 libSellsuki.getUser = jest.fn().mockReturnValue({ data: { results: {} } })
 webPushNotification.changeDataFormat = jest.fn().mockReturnValue({})

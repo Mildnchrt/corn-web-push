@@ -2,6 +2,7 @@ const userRef = require('../../config')
 
 module.exports = {
   getUserByStoreId (storeId) {
+    console.log('comeinnn')
     return userRef.database
       .init()
       .doc(storeId)

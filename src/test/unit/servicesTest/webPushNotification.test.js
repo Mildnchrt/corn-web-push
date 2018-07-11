@@ -3,7 +3,7 @@ const sellsuki = require('../../../library/sellsuki')
 const libOnesignal = require('../../../library/onesignal')
 
 // mock return value function
-sellsuki.getUser = jest.fn().mockReturnValue({ data: { results: {} } })
+sellsuki.getStoreNoti= jest.fn().mockReturnValue({ data: { results: {} } })
 libFirestore.getActiveUser = jest.fn().mockReturnValue({})
 libOnesignal.sendNotification = jest.fn()
 libFirestore.updateData = jest.fn()
@@ -22,11 +22,11 @@ describe('describe webPushnotification endpoint', () => {
     let input = {
       storeId: '',
       playerId: '',
-      isAllow: null,
-      isComplete: null,
+      isAllowed: null,
+      isCompleted: null,
       stage: '',
-      createAt: '',
-      updateAt: '',
+      createdAt: '',
+      updatedAt: '',
       dataOneSignal: null,
       dataSellsuki: null
     }
@@ -34,27 +34,27 @@ describe('describe webPushnotification endpoint', () => {
     let output = {
       storeId: '',
       playerId: '',
-      isAllow: false,
-      isComplete: false,
+      isAllowed: false,
+      isCompleted: false,
       stage: 'product',
-      createAt: '',
-      updateAt: '',
+      createdAt: '',
+      updatedAt: '',
       dataOneSignal: {},
       dataSellsuki: {}
     }
 
-    expect(webPushNotification.changeDataFormat(input)).toEqual(output)
+    expect(webPushNotification.userDataTransform(input)).toEqual(output)
   })
 
   it ('sent data to change data format', () => {
     let input = {
       storeId: '01', 
       playerId: '01', 
-      isAllow: false, 
-      isComplete: false, 
+      isAllowed: false, 
+      isCompleted: false, 
       stage: '', 
-      createAt: 'today', 
-      updateAt: '', 
+      createdAt: 'today', 
+      updatedAt: '', 
       datOneSignale: null, 
       dataSellsuki: { test: 'test' }
     }
@@ -62,28 +62,28 @@ describe('describe webPushnotification endpoint', () => {
     let output = {
       storeId: '01',
       playerId: '01',
-      isAllow: false,
-      isComplete: false,
+      isAllowed: false,
+      isCompleted: false,
       stage: 'product',
-      createAt: 'today',
-      updateAt: '',
+      createdAt: 'today',
+      updatedAt: '',
       dataOneSignal: {},
       dataSellsuki: { test: 'test' }
     }
 
-    expect(webPushNotification.changeDataFormat(input)).toEqual(output)
+    expect(webPushNotification.userDataTransform(input)).toEqual(output)
   })
 
   it ('get user from sellsuki data', async () => {
     await webPushNotification.getUserFromSellsuki('1')
-    expect(sellsuki.getUser.mock.calls.length).toBe(1)
+    expect(sellsuki.getStoreNoti.mock.calls.length).toBe(1)
   })
 
   it ('update data to Firestore', () => {
     let userFirestore = {}
     let userSellsuki = {}
     let stage = ''
-    let isComplete = ''
+    let isCompleted = ''
     let time = ''
     let result = webPushNotification.updateDataToFirestore(userFirestore, userSellsuki, stage, time)
     

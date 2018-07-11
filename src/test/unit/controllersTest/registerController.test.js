@@ -1,8 +1,8 @@
 const { registerController } = require('../../../controllers/web-noti')
 const { register } = require('../../../services/web-noti/')
 
-register.checkPlayerFirestore = jest.fn().mockReturnValueOnce(true).mockReturnValue(false)
-register.createNewUser = jest.fn().mockReturnValue('success')
+register.isPlayer = jest.fn().mockReturnValueOnce(true).mockReturnValue(false)
+register.createUser = jest.fn().mockReturnValue('success')
 
 let request = {
  params: {
@@ -21,16 +21,16 @@ describe('describe controller/register endpoint', async () => {
   it ('already have user in Firestore', async () => { 
     const result = await registerController(request, response)
 
-    expect(register.createNewUser.mock.calls.length).toBe(0)
-    expect(register.checkPlayerFirestore.mock.calls.length).toBe(1)
-    expect(result).toBe('alreadyHaveUser')  
+    expect(register.createUser.mock.calls.length).toBe(0)
+    expect(register.isPlayer.mock.calls.length).toBe(1)
+    expect(result).toBe({ success: 0, message: "Store data is duplicated." })  
   })
 
   it ('create new user to Firestore', async () => {
     const result = await registerController(request, response)
 
-    expect(register.checkPlayerFirestore.mock.calls.length).toBe(2)
-    expect(register.createNewUser.mock.calls.length).toBe(1)
+    expect(register.isPlayer.mock.calls.length).toBe(2)
+    expect(register.createUser.mock.calls.length).toBe(1)
     expect(result).toBe('success')  
   })
 })

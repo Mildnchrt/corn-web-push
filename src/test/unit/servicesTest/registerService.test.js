@@ -27,8 +27,8 @@ describe ('describe services/register endpoint', async () => {
   })
   
   it ('create new user to Firestore', async () => {
-    let updateTime = new Date()
-    const result = await createNewUser('1', '5e094f14-fd88-493b-a2a3-ea09bb69f1b1', true, updateTime)
+    let now = new Date()
+    const result = await createNewUser('1', '5e094f14-fd88-493b-a2a3-ea09bb69f1b1', true, now)
 
     expect(result).toBe('success')
     expect(libOnesignal.getDevice.mock.calls.length).toBe(1)

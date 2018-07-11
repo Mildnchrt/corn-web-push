@@ -55,7 +55,7 @@ module.exports = {
       stage = constant.STAGE.SHIPPING
       isComplete = true
     }
-    let input = {
+    let data = this.changeDataFormat({ 
       storeId: userSellsuki.store_id, 
       playerId: userFirestore.playerId, 
       isAllow: userFirestore.isAllow, 
@@ -64,9 +64,8 @@ module.exports = {
       createAt: userFirestore.createAt,
       updateAt: updateTime,
       dataOneSignal: userFirestore.dataOneSignal,
-      userSellsuki: userSellsuki
-    }
-    let data = this.changeDataFormat(input)
+      userSellsuki: userSellsuki 
+    })
 
     updateData(data.storeId, data)
   },
@@ -74,7 +73,8 @@ module.exports = {
   pushNotification: function (user) {
     let heading, content
     // let url = ''
-    
+    let a = {}
+    a[constant.STAGE.PRODUCT]
     if (user.dataOneSignal && user.dataOneSignal.language === 'th') {
       if (user.stage === constant.STAGE.PRODUCT) {
         heading = 'มาเริ่มสร้างสินค้าชิ้นแรก บนร้านค้าของคุณกัน!'
@@ -111,18 +111,16 @@ module.exports = {
   },
   
   changeDataFormat: function(user) {
-    let data = {
-      storeId: ('storeId' in user && user.storeId) ? user.storeId : '',
-      playerId: ('playerId' in user && user.playerId) ? user.playerId : '',
-      isAllow: ('isAllow' in user && user.isAllow) ? user.isAllow : false,
-      isComplete: ('isComplete' in user && user.isComplete) ? user.isComplete : false,
-      stage: ('stage' in user && user.stage) ? user.stage : constant.STAGE.PRODUCT,
-      createAt: ('createAt' in user && user.createAt) ? user.createAt : '',
-      updateAt: ('updateAt' in user && user.updateAt) ? user.updateAt : '',
-      dataOneSignal: ('dataOneSignal' in user && user.dataOneSignal) ? user.dataOneSignal : {},
-      dataSellsuki: ('dataSellsuki' in user && user.dataSellsuki) ? user.dataSellsuki : {},
+    return {
+      storeId: user && user.storeId || '',
+      playerId: user && user.playerId || '',
+      isAllow: user && user.isAllow || false,
+      isComplete: user && user.isComplete || false,
+      stage: user && user.stage || constant.STAGE.PRODUCT,
+      createAt: user && user.createAt || '',
+      updateAt: user && user.updateAt || '',
+      dataOneSignal: user && user.dataOneSignal || {},
+      dataSellsuki: user && user.dataSellsuki || {}
     }
-
-    return data
   }
 }

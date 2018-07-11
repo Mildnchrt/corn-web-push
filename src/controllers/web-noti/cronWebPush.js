@@ -1,16 +1,13 @@
 const { webPushNotification } = require('../../services/web-noti')
-const { getUserByStoreId } = require('../../library/firestore')
-const { getUser } = require('../../library/sellsuki')
 
-module.exports = async function (request, response) {
+module.exports = async function () {
   let usersNotDone = await webPushNotification.getUserNotComplete()  
   let usersCollection = webPushNotification.setDataStoreCollections(usersNotDone)
   let usersSellsuki = await webPushNotification.getUserFromSellsuki(usersCollection.storeIds)
-
+  let updateTime = new Date()
 
   usersSellsuki.forEach((user, index) => {
-    let stage = webPushNotification.getUserStage(user)
-    let updateTime = new Date()
+    let stage = webPushNotification.getUserStage(user)   
     webPushNotification.updateDataToFirestore(usersCollection.data[index], user, stage, updateTime)
   })
   

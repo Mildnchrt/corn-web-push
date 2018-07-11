@@ -29,14 +29,81 @@ module.exports = {
 
   getUserFromSellsuki: async function (store) {
     let user = await getUser(store)
+    return user
 
-    try {
-      return user.results
-    } catch (error) {
-      console.log(error)
-    }
+    // try {
+    //   console.log('user result >>>>>>> ', user.results)
+    //   return user.results
+    // } catch (error) {
+    //   console.log(error)
+    // }
   },
+  mapStoreIdToString: function(storesCollection) {
+    return storesCollection.map((store) => {
+        return store.storeId
+      }).join()
+  },
+  getStoreFromSellsuki: async function (usersNotDone) {
 
+    let storeGroups = []
+    var usersSellsuki = []
+    let ress = []
+    // let a = []
+    // const totalStoreId = usersNotDone.docs.map(v => {
+    //   return v.data().storeId
+    // })
+    // console.log("totalStoreId", totalStoreId)
+    usersNotDone.docs.forEach(async (user, index) => {
+      
+      storeGroups.push(user.data())
+      // ress.push(user.get())
+
+      // console.log(user.data())
+      //Count 10 then sent to get (str->getUser)
+      if(index % 10 === 0 || index === usersNotDone.docs.length - 1) {
+        let str = ''
+        let datas = []
+        console.log('checkPoint *** ')
+        //Get str->getUser
+        str = this.mapStoreIdToString(storeGroups)
+        // console.log('str >>', str)
+
+        datas = await this.getUserFromSellsuki(str)
+        // console.log(datas)
+        //Add datas to usersSellsuki Obj
+        // console.log("datas", datas)
+        datas.results.forEach((data) => {
+          // console.log('dat >>>>>> ', parseInt(data.store_id))
+          let a = []
+          a[parseInt(data.store_id)] = data
+          console.log('a' , a[parseInt(data.store_id)])
+          usersSellsuki.push(a)
+        })
+        // console.log('user > ', usersSellsuki)
+        //Set zero after get Data
+        // userNotDoneCollection = []
+        storeGroups= []
+      }
+
+    })
+
+    console.log('result > ', usersSellsuki)
+    return usersSellsuki
+  },
+  updateFirestoreAndSendNotification: function(usersNotDone, usersSellsuki, updateTime) {
+    
+    let stage = ''
+    usersNotDone.forEach((user) => {
+      //Get stage and update data to firestore
+      stage = webPushNotification.getUserStage(usersSellsuki[user.storeId])
+      this.updateDataToFirestore(user, usersSellsuki[user.storeId], stage, updateTime)
+
+      //Push notification
+      if(stage !== '') {
+        this.pushNotification(user.data())
+      }
+    })
+  },
   getUserStage: function (user) {
     let stage = ''
     if (user.count_product <= 1) {

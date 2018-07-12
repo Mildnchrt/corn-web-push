@@ -9,7 +9,7 @@ libOnesignal.sendNotification = jest.fn()
 libFirestore.updateData = jest.fn()
 const { webPushNotification } = require('../../../services/web-noti')
 
-describe('describe webPushnotification endpoint', () => {
+describe('describe services/webPushnotification endpoint', () => {
   test ('get user stage', async () => {
     let user = {
       count_product: 1
@@ -110,6 +110,7 @@ describe('describe webPushnotification endpoint', () => {
     let userNotDone = { 
       docs: []
      }
+
     expect(webPushNotification.setDataStoreCollections(userNotDone)).toEqual({})
   })
 

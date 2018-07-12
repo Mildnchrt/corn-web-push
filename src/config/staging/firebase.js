@@ -19,7 +19,7 @@ db.settings(settings)
 
 class config {
   init () {
-    return db.collection('stores')
+    return db.collection('store')
   }
 }
 

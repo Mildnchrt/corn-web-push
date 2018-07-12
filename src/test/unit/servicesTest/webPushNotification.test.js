@@ -18,7 +18,7 @@ describe('describe services/webPushnotification endpoint', () => {
       STAGE_NAME: 'PRODUCT'
     }
 
-    expect(webPushNotification.getUserStage(user)).toEqual(output.STAGE_NAME)
+    expect(webPushNotification.getStoreStage(user)).toEqual(output.STAGE_NAME)
   })
 
   test ('sent null data to change data format', () => {
@@ -46,7 +46,7 @@ describe('describe services/webPushnotification endpoint', () => {
       dataSellsuki: {}
     }
 
-    expect(webPushNotification.userDataTransform(input)).toEqual(output)
+    expect(webPushNotification.storeDataTransform(input)).toEqual(output)
   })
 
   test ('sent data to change data format', () => {
@@ -74,11 +74,11 @@ describe('describe services/webPushnotification endpoint', () => {
       dataSellsuki: { test: 'test' }
     }
 
-    expect(webPushNotification.userDataTransform(input)).toEqual(output)
+    expect(webPushNotification.storeDataTransform(input)).toEqual(output)
   })
 
   test ('get user from sellsuki data', async () => {
-    await webPushNotification.getUserFromSellsuki('1')
+    await webPushNotification.getStoteSellukiNoti('1')
     expect(sellsuki.getStoreNoti.mock.calls.length).toBe(1)
   })
 
@@ -88,13 +88,13 @@ describe('describe services/webPushnotification endpoint', () => {
     let stage = ''
     let isCompleted = ''
     let time = ''
-    let result = webPushNotification.updateDataToFirestore(userFirestore, userSellsuki, stage, time)
+    let result = webPushNotification.updateStore(userFirestore, userSellsuki, stage, time)
     
     expect(libFirestore.updateData.mock.calls.length).toBe(1)
   })
 
   test ('get user not complete', async () => {
-    await webPushNotification.getUserNotComplete()
+    await webPushNotification.getActiveStore()
     expect(libFirestore.getActiveUser.mock.calls.length).toBe(1)
   })
 
@@ -103,31 +103,5 @@ describe('describe services/webPushnotification endpoint', () => {
     let result = webPushNotification.pushNotification(user)
 
     expect(libOnesignal.sendNotification.mock.calls.length).toBe(1)
-  })
-
-  test ('set data store collections is empty', async () => {
-    let userNotDone = { 
-      docs: []
-     }
-
-    expect(webPushNotification.setDataStoreCollections(userNotDone)).toEqual({})
-  })
-
-  test ('set data store collections', async () => {
-    let userNotDone = {
-      docs: [
-        { data: jest.fn().mockReturnValue({ storeId: '1' }) },
-        { data: jest.fn().mockReturnValue({ storeId: '2' }) }
-      ]
-    }
-
-    let output = {
-      'data': 
-        [ { 'storeId': '1' }, 
-        { 'storeId': '2' } ], 
-      'storeIds': '1,2'
-    }
-
-    expect(webPushNotification.setDataStoreCollections(userNotDone)).toEqual(output)
   })
 })

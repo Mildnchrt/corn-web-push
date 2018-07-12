@@ -1,5 +1,8 @@
 module.exports = {
   STAGE: {
+    COMPLETED: {
+      STAGE_NAME: 'COMPLETED',
+    },
     PRODUCT: {
       STAGE_NAME: 'PRODUCT',
       en: {

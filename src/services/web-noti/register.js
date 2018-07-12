@@ -14,7 +14,7 @@ module.exports = {
 
   getStoreNoti: async function (storeIds) {
     let data = await sellsuki.getStoreNoti(storeIds)
-    return data.data.results
+    return data.data.results[0]
   },
   
   createUser: async function (data) {

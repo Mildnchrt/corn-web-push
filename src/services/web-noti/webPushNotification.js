@@ -95,11 +95,8 @@ module.exports = {
 
   pushNotification: function (user, stage) {
     let heading, content
-    let userLanguage
-
     if (user.dataOneSignal) {
-      userLanguage = user.dataOneSignal.language
-
+      let userLanguage = user.dataOneSignal.language
       heading = constant.STAGE[stage][userLanguage].HEADING
       content = constant.STAGE[stage][userLanguage].CONTENT
     }
@@ -112,7 +109,11 @@ module.exports = {
     }
     
     onesignal.sendNotification(message)
-    return 'success: 1'
+
+    return {
+      success: 1,
+      message: 'success.'
+    }
   },
   
   userDataTransform: function (user) {

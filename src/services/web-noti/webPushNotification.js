@@ -30,10 +30,11 @@ module.exports = {
 
   getUserFromSellsuki: async function (store) {
     let user = await sellsuki.getStoreNoti(store)    
-
+    console.log(user);
+    
     try {
       // return user.results
-      return user.data.results
+      // return user.results
     } catch (error) {
       console.log(error)
     }
@@ -110,7 +111,7 @@ module.exports = {
       include_player_ids: [ user.playerId ]
     }
     
-    onesignal.sendNotification(message)
+    // onesignal.sendNotification(message)
     return 'success: 1'
   },
   

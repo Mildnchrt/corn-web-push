@@ -18,7 +18,7 @@ const settings = {
 db.settings(settings)
 
 class config {
-  init () {
+  intest () {
     return db.collection('users')
   }
 }

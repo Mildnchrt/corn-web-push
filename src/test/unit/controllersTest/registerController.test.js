@@ -18,7 +18,7 @@ let response = {
 
 describe('describe controller/register endpoint', async () => {
 
-  it ('already have user in Firestore', async () => { 
+  test ('already have user in Firestore', async () => { 
     const result = await registerController(request, response)
 
     expect(register.createUser.mock.calls.length).toBe(0)
@@ -26,7 +26,7 @@ describe('describe controller/register endpoint', async () => {
     expect(result).toEqual({ success: 0, message: "Store data is duplicated." })  
   })
 
-  it ('create new user to Firestore', async () => {
+  test ('create new user to Firestore', async () => {
     const result = await registerController(request, response)
 
     expect(register.isPlayer.mock.calls.length).toBe(2)

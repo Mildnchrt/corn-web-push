@@ -28,7 +28,7 @@ module.exports = {
   },
 
   getUserFromSellsuki: async function (store) {
-    let user = await sellsuki.getStoreNoti(store)    
+    let user = await sellsuki.getStoreNoti(store)        
     try {
       return user.data.results
     } catch (error) {
@@ -89,7 +89,7 @@ module.exports = {
       include_player_ids: [ user.playerId ]
     }
 
-    onesignal.sendNotification(message)
+    // onesignal.sendNotification(message)
     return 'success: 1'
   },
   

@@ -18,8 +18,8 @@ const settings = {
 db.settings(settings)
 
 class config {
-  intest () {
-    return db.collection('users')
+  init () {
+    return db.collection('stores')
   }
 }
 

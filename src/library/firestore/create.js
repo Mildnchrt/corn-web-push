@@ -1,21 +1,21 @@
-const userRef = require('../../config')
+const storeRef = require('../../config')
 
 module.exports = {
   createStore (storeId, data) {
-    return userRef.database
+    return storeRef.database
       .init()
       .doc(storeId)
       .set(data)
       .then(function () {
         return {
           success: 1,
-          message: 'success'
+          message: 'Created success.'
         }
       })
       .catch(function () {
         return {
           success: 0,
-          message: 'fail'
+          message: 'Fail to create.'
         }
       })
   }

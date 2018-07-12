@@ -12,20 +12,20 @@ webPushNotification.userDataTransform = jest.fn().mockReturnValue({})
 const { isPlayer, createUser, getPlayer, getStoreNoti } = require('../../../services/web-noti/register')
 
 describe ('describe services/register endpoint', async () => {
-  it ('check playerId dont have in Firestore', async () => { 
+  test ('check playerId dont have in Firestore', async () => { 
     const result = await isPlayer('$$')
 
     expect(result).toBe(false)
     expect(libFirestore.getStoreById.mock.calls.length).toBe(1)
   })
 
-  it ('check playerId already have in Firestore', async () => { 
+  test ('check playerId already have in Firestore', async () => { 
     const result = await isPlayer('1')
     expect(result).toEqual({ doc: { data: {} } })
     expect(libFirestore.getStoreById.mock.calls.length).toBe(2)
   })
   
-  it ('create new user to Firestore', async () => {
+  test ('create new user to Firestore', async () => {
     const result = await createUser(
       { 
         storeId: '1', 

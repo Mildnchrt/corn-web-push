@@ -6,7 +6,8 @@ module.exports = async function () {
   let storeCollections = webPushNotification.sliceStoreToCollection(usersNotDone)
   let storesSellsuki = await webPushNotification.getStoreFromSellsuki(storeCollections)
   webPushNotification.updateFirestoreAndSendNotification(usersNotDone, storesSellsuki, updateTime)
-
-  // console.log('storesSellsuki  >>> ', storeCollections)
-  // console.log('succes: 1')
+  return {
+    success: 1, 
+    message: 'success'
+  }
 }

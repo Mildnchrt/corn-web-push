@@ -1,8 +1,8 @@
-const userRef = require('../../config')
+const storeRef = require('../../config')
 
 module.exports = {
   getStoreById (storeId) {
-    return userRef.database
+    return storeRef.database
       .init()
       .doc(storeId)
       .get()

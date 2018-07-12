@@ -1,15 +1,15 @@
-const userRef = require('../../config')
+const storeRef = require('../../config')
 
 module.exports = {
   updateData (storeId, data) {
-    userRef.database
+    storeRef.database
       .init()
       .doc(storeId)
       .update(data)
 
     return {
       success: 1, 
-      message: 'updated success'
+      message: 'Updated success.'
     }
   }
 }

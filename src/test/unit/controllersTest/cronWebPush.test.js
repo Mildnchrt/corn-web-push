@@ -39,8 +39,8 @@ webPushNotification.pushNotification = jest.fn()
 
 const { cronController } = require('../../../controllers/web-noti')
 
-describe('describe cronWebPush endpoint', () => {
-  it ('cronWebPush', async () => {
+describe('describe controller/cronWebPush endpoint', () => {
+  test ('web push notification controller', async () => {
     let res = await cronController()
     expect(webPushNotification.getUserNotComplete.mock.calls.length).toBe(2)
     expect(webPushNotification.setDataStoreCollections.mock.calls.length).toBe(1)

@@ -1,38 +1,37 @@
-const { getUserByStoreId, createData } = require('../../library/firestore')
-const { getDevice } = require('../../library/onesignal')
-const { getUser } = require('../../library/sellsuki')
+const firestore = require('../../library/firestore')
+const onesignal = require('../../library/onesignal')
+const sellsuki = require('../../library/sellsuki')
 const webPushNotification  = require('./webPushNotification')
 
 module.exports = {
-  checkPlayerFirestore: async function (storeId) {
-    let result = await getUserByStoreId(storeId)
-    if (!result) {
-      return false
-    } else { 
-      return true
-    }
+  isPlayer: async function (storeId) {
+    return await firestore.getStoreById(storeId)
+  },
+
+  getPlayer: async function (playerId) {
+    return await onesignal.getDevice(playerId)
+  },
+
+  getStoreNoti: async function (storeIds) {
+    let data = await sellsuki.getStoreNoti(storeIds)
+    return data.results
   },
   
-  createNewUser: async function (storeId, playerId, isAllow, updateTime) {
-    let promiseOneSignal = getDevice(playerId)
-    let promiseSellsuki = getUser(storeId)
-    let userOneSignal = await promiseOneSignal
-    let userSellsuki = await promiseSellsuki
-    let user = {
-      storeId: storeId,
-      playerId: playerId,
-      isAllow: isAllow,
-      isComplete: '',
+  createUser: async function (data) {
+    let now = new Date()
+    let user = webPushNotification.userDataTransform({
+      storeId: data.storeId,
+      playerId: data.playerId,
+      isAllowed: data.isAllowed,
+      isCompleted: '',
       stage: '',
-      createAt: updateTime,
-      updateAt: updateTime,
-      dataOneSignal: userOneSignal,
-      dataSellsuki: userSellsuki.results
-    }
+      createdAt: now,
+      updatedAt: now,
+      dataOneSignal: data.userOneSignal,
+      dataSellsuki: data.userSellsuki
+    })
 
-    let data = webPushNotification.changeDataFormat(user)
-
-    let responseCreateData = await createData(storeId, data)
-    return responseCreateData
+    let res = await firestore.createStore(data.storeId, user)
+    return res
   }
 }

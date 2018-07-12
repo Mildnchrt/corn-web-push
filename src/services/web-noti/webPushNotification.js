@@ -1,11 +1,12 @@
-const { getActiveUser, updateData }  = require('../../library/firestore')
-const { getUser } = require('../../library/sellsuki')
-const { sendNotification }  = require('../../library/onesignal')
+// const { getActiveUser, updateData }  = require('../../library/firestore')
+const firestore = require('../../library/firestore')
+const sellsuki = require('../../library/sellsuki')
+const onesignal  = require('../../library/onesignal')
 const { constant } = require('../../config')
 
 module.exports = {
   getUserNotComplete: async function () {
-    let activeUserData = await getActiveUser()
+    let activeUserData = await firestore.getActiveUser()
     return activeUserData
   },
 
@@ -28,10 +29,11 @@ module.exports = {
   },
 
   getUserFromSellsuki: async function (store) {
-    let user = await getUser(store)
+    let user = await sellsuki.getStoreNoti(store)    
 
     try {
-      return user.results
+      // return user.results
+      return user.data.results
     } catch (error) {
       console.log(error)
     }
@@ -49,32 +51,34 @@ module.exports = {
     return stage
   },
 
-  updateDataToFirestore:  function (userFirestore, userSellsuki, stage, updateTime) {
+  updateDataToFirestore: function (userFirestore, userSellsuki, stage, updateTime) {
     let isComplete = false
     if (stage === '') {
       stage = constant.STAGE.SHIPPING
       isComplete = true
     }
-    let data = this.changeDataFormat({ 
+    
+    let data = this.userDataTransform({ 
       storeId: userSellsuki.store_id, 
       playerId: userFirestore.playerId, 
-      isAllow: userFirestore.isAllow, 
-      isComplete: isComplete, 
+      isAllowed: userFirestore.isAllow, 
+      isCompleted: isComplete, 
       stage: stage,
-      createAt: userFirestore.createAt,
-      updateAt: updateTime,
+      createdAt: userFirestore.createAt,
+      updatedAt: updateTime,
       dataOneSignal: userFirestore.dataOneSignal,
       userSellsuki: userSellsuki 
-    })
+    })    
 
-    updateData(data.storeId, data)
+    firestore.updateData(data.storeId, data)
   },
 
   pushNotification: function (user) {
     let heading, content
     // let url = ''
-    let a = {}
-    a[constant.STAGE.PRODUCT]
+    // let a = {}
+    // a[constant.STAGE.PRODUCT]
+
     if (user.dataOneSignal && user.dataOneSignal.language === 'th') {
       if (user.stage === constant.STAGE.PRODUCT) {
         heading = 'มาเริ่มสร้างสินค้าชิ้นแรก บนร้านค้าของคุณกัน!'
@@ -105,20 +109,20 @@ module.exports = {
       contents: { 'en': content },
       include_player_ids: [ user.playerId ]
     }
-
-    sendNotification(message)
+    
+    onesignal.sendNotification(message)
     return 'success: 1'
   },
   
-  changeDataFormat: function(user) {
+  userDataTransform: function (user) {
     return {
       storeId: user && user.storeId || '',
       playerId: user && user.playerId || '',
-      isAllow: user && user.isAllow || false,
-      isComplete: user && user.isComplete || false,
+      isAllowed: user && user.isAllow || false,
+      isCompleted: user && user.isComplete || false,
       stage: user && user.stage || constant.STAGE.PRODUCT,
-      createAt: user && user.createAt || '',
-      updateAt: user && user.updateAt || '',
+      createdAt: user && user.createAt || '',
+      updatedAt: user && user.updateAt || '',
       dataOneSignal: user && user.dataOneSignal || {},
       dataSellsuki: user && user.dataSellsuki || {}
     }

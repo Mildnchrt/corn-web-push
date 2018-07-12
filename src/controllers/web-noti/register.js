@@ -3,7 +3,7 @@ const { register } = require('../../services/web-noti')
 module.exports = async function (request, response) {
   let params = request.params
   let hasDataFirestore = await register.isPlayer(params.storeid)
-  console.log(hasDataFirestore)
+
   if (!hasDataFirestore) {
     let storeData  =  await register.getStoreNoti(params.storeid)
     let playerData =  await register.getPlayer(params.playerid)

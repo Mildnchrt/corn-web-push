@@ -89,7 +89,7 @@ module.exports = {
       include_player_ids: [ user.playerId ]
     }
 
-    // onesignal.sendNotification(message)
+    onesignal.sendNotification(message)
     return 'success: 1'
   },
   

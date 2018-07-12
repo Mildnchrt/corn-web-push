@@ -1,5 +1,5 @@
 const { fetch } = require('./http_request')
-
+const { constant } = require('../../config')
 
 module.exports = {
   async getStoreNoti (storeId) {

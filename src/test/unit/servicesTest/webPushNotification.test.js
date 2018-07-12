@@ -65,7 +65,7 @@ describe('describe webPushnotification endpoint', () => {
       isAllowed: false,
       isCompleted: false,
       stage: 'product',
-      createdAt: 'today',
+      createdAt: '',
       updatedAt: '',
       dataOneSignal: {},
       dataSellsuki: { test: 'test' }

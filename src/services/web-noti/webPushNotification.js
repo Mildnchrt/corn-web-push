@@ -1,11 +1,12 @@
-const { getActiveUser, updateData }  = require('../../library/firestore')
+// const { getActiveUser, updateData }  = require('../../library/firestore')
+const firestore = require('../../library/firestore')
 const sellsuki = require('../../library/sellsuki')
 const onesignal  = require('../../library/onesignal')
 const { constant } = require('../../config')
 
 module.exports = {
   getUserNotComplete: async function () {
-    let activeUserData = await getActiveUser()
+    let activeUserData = await firestore.getActiveUser()
     return activeUserData
   },
 
@@ -28,10 +29,11 @@ module.exports = {
   },
 
   getUserFromSellsuki: async function (store) {
-    let user = await sellsuki.getStoreNoti(store)
+    let user = await sellsuki.getStoreNoti(store)    
 
     try {
-      return user.results
+      // return user.results
+      return user.data.results
     } catch (error) {
       console.log(error)
     }
@@ -55,6 +57,7 @@ module.exports = {
       stage = constant.STAGE.SHIPPING
       isComplete = true
     }
+    
     let data = this.userDataTransform({ 
       storeId: userSellsuki.store_id, 
       playerId: userFirestore.playerId, 
@@ -65,16 +68,17 @@ module.exports = {
       updatedAt: updateTime,
       dataOneSignal: userFirestore.dataOneSignal,
       userSellsuki: userSellsuki 
-    })
+    })    
 
-    updateData(data.storeId, data)
+    firestore.updateData(data.storeId, data)
   },
 
   pushNotification: function (user) {
     let heading, content
     // let url = ''
-    let a = {}
-    a[constant.STAGE.PRODUCT]
+    // let a = {}
+    // a[constant.STAGE.PRODUCT]
+
     if (user.dataOneSignal && user.dataOneSignal.language === 'th') {
       if (user.stage === constant.STAGE.PRODUCT) {
         heading = 'มาเริ่มสร้างสินค้าชิ้นแรก บนร้านค้าของคุณกัน!'
@@ -105,7 +109,7 @@ module.exports = {
       contents: { 'en': content },
       include_player_ids: [ user.playerId ]
     }
-
+    
     onesignal.sendNotification(message)
     return 'success: 1'
   },

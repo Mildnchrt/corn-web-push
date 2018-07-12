@@ -1,7 +1,7 @@
 const firestore = require('../../library/firestore')
 const onesignal = require('../../library/onesignal')
 const sellsuki = require('../../library/sellsuki')
-const webPushNotification  = require('./webPushNotification')
+const webPushNotification = require('./webPushNotification')
 
 module.exports = {
   isPlayer: async function (storeId) {
@@ -14,7 +14,7 @@ module.exports = {
 
   getStoreNoti: async function (storeIds) {
     let data = await sellsuki.getStoreNoti(storeIds)
-    return data.results
+    return data.data.results
   },
   
   createUser: async function (data) {
@@ -27,8 +27,8 @@ module.exports = {
       stage: '',
       createdAt: now,
       updatedAt: now,
-      dataOneSignal: data.userOneSignal,
-      dataSellsuki: data.userSellsuki
+      dataOneSignal: data.dataOneSignal,
+      dataSellsuki: data.dataSellsuki
     })
 
     let res = await firestore.createStore(data.storeId, user)

@@ -6,7 +6,7 @@ const { constant } = require('../../config')
 module.exports = {
   getUserNotComplete: async function () {
     let activeUserData = await getActiveUser()
-    return activeUserData
+    return activeUserData.docs
   },
 
   setDataStoreCollections: function (userNotDone) {
@@ -30,7 +30,6 @@ module.exports = {
   getUserFromSellsuki: async function (store) {
     let user = await getUser(store)
     return user
-
     // try {
     //   console.log('user result >>>>>>> ', user.results)
     //   return user.results
@@ -44,51 +43,28 @@ module.exports = {
       }).join()
   },
   getStoreFromSellsuki: async function (usersNotDone) {
-
+    let results = []
     let storeGroups = []
-    var usersSellsuki = []
-    let ress = []
-    // let a = []
-    // const totalStoreId = usersNotDone.docs.map(v => {
-    //   return v.data().storeId
-    // })
-    // console.log("totalStoreId", totalStoreId)
-    usersNotDone.docs.forEach(async (user, index) => {
-      
-      storeGroups.push(user.data())
-      // ress.push(user.get())
+    // console.log('usersNotDone', usersNotDone.docs.data().length)
+    //1st promise]
+      usersNotDone.forEach(async (user, index) => {
+        console.log('>>', user.data())
+        //keep 10
+    //     storeGroups.push(user.data())
 
-      // console.log(user.data())
-      //Count 10 then sent to get (str->getUser)
-      if(index % 10 === 0 || index === usersNotDone.docs.length - 1) {
-        let str = ''
-        let datas = []
-        console.log('checkPoint *** ')
-        //Get str->getUser
-        str = this.mapStoreIdToString(storeGroups)
-        // console.log('str >>', str)
+    //     //Condition if count is 10
+    //     if(index % 9 === 0 || index === usersNotDone.docs.length - 1) {
+    //       let str = this.mapStoreIdToString(storeGroups)
+    //       let dataSellsuki = await this.getUserFromSellsuki(str)
 
-        datas = await this.getUserFromSellsuki(str)
-        // console.log(datas)
-        //Add datas to usersSellsuki Obj
-        // console.log("datas", datas)
-        datas.results.forEach((data) => {
-          // console.log('dat >>>>>> ', parseInt(data.store_id))
-          let a = []
-          a[parseInt(data.store_id)] = data
-          console.log('a' , a[parseInt(data.store_id)])
-          usersSellsuki.push(a)
-        })
-        // console.log('user > ', usersSellsuki)
-        //Set zero after get Data
-        // userNotDoneCollection = []
-        storeGroups= []
-      }
-
+    //       //2nd loop
+    //       dataSellsuki.results.forEach((data) => {
+    //         results[parseInt(data.store_id)] = data
+    //       })
+    //     }
     })
+    // return Promise.all(results)
 
-    console.log('result > ', usersSellsuki)
-    return usersSellsuki
   },
   updateFirestoreAndSendNotification: function(usersNotDone, usersSellsuki, updateTime) {
     

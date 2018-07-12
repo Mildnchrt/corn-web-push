@@ -1,6 +1,6 @@
 module.exports = {
   STAGE: {
-    PRODUCT: '77777777777777777777777',
+    PRODUCT: 'product',
     SHIPPING: 'shipping',
     PAYMENT: 'payment'
   },

@@ -1,5 +1,5 @@
-const { getUser } = require('./getUser')
+const { getStoreNoti } = require('./getUser')
 
 module.exports = {
-  getUser
+  getStoreNoti
 }

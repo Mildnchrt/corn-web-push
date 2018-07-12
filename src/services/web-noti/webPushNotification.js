@@ -5,7 +5,7 @@ const { constant } = require('../../config')
 
 module.exports = {
   getUserNotComplete: async function () {
-    let activeUserData = await firestore.getActiveUser()
+    let activeUserData = await firestore.getActiveUser()    
     return activeUserData
   },
 
@@ -28,7 +28,7 @@ module.exports = {
   },
 
   getUserFromSellsuki: async function (store) {
-    let user = await sellsuki.getStoreNoti(store)        
+    let user = await sellsuki.getStoreNoti(store)    
     try {
       return user.data.results
     } catch (error) {
@@ -88,7 +88,7 @@ module.exports = {
       contents: { 'en': content },
       include_player_ids: [ user.playerId ]
     }
-
+    
     onesignal.sendNotification(message)
     return 'success: 1'
   },

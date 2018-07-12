@@ -2,7 +2,6 @@ const libFirestore  = require('../../../library/firestore')
 const sellsuki = require('../../../library/sellsuki')
 const libOnesignal = require('../../../library/onesignal')
 
-// mock return value function
 sellsuki.getStoreNoti= jest.fn().mockReturnValue({ data: { results: {} } })
 libFirestore.getActiveUser = jest.fn().mockReturnValue({})
 libOnesignal.sendNotification = jest.fn()

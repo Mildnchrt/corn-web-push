@@ -1,15 +1,15 @@
-const userRef = require('../../config')
+const storeRef = require('../../config')
 
 module.exports = {
   deleteData (storeId) {
-    userRef.database
+    storeRef.database
       .init()
       .doc(storeId)
       .delete()
       
     return {
       success: 1, 
-      message: 'deleted success'
+      message: 'Deleted success.'
     }
   }
 }

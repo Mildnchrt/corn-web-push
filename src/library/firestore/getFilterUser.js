@@ -1,8 +1,8 @@
-const userRef = require('../../config')
+const storeRef = require('../../config')
 
 module.exports = {
   getFilterUser (key, operation, value) {
-    return userRef.database
+    return storeRef.database
     .init()
     .where(key, operation, value)
     .get()

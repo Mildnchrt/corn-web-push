@@ -4,8 +4,8 @@ module.exports = async function () {
   let usersNotDone = await webPushNotification.getUserNotComplete()    
   let usersCollection = await webPushNotification.setDataStoreCollections(usersNotDone)
   let usersSellsuki = await webPushNotification.getUserFromSellsuki(usersCollection.storeIds)
-  let updateTime = new Date()  
-  
+  let updateTime = new Date()
+    
   usersSellsuki.forEach((user, index) => {
     let stage = webPushNotification.getUserStage(user)
     webPushNotification.updateDataToFirestore(usersCollection.data[index], user, stage, updateTime)

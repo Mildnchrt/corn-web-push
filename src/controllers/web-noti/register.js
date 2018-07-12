@@ -1,13 +1,13 @@
 const { register } = require('../../services/web-noti')
 
 module.exports = async function (request, response) {
-  //let updateTime = new Date()
   let params = request.params
-  let hasDataFirestore = register.isPlayer(params.storeid)
+  let hasDataFirestore = await register.isPlayer(params.storeid)
+  console.log(hasDataFirestore)
   if (!hasDataFirestore) {
-    let storeData  = register.getStoreNoti(params.storeid)
-    let playerData = register.getPlayer(params.playerid)
-    let res = register.createUser({ 
+    let storeData  =  await register.getStoreNoti(params.storeid)
+    let playerData =  await register.getPlayer(params.playerid)
+    let res = await register.createUser({ 
       storeId: params.storeid, 
       playerId: params.playerid, 
       isAllowed: params.allow,

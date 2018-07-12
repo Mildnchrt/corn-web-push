@@ -4,8 +4,8 @@ module.exports = {
   getActiveUser() {
     return userRef.database
       .init()
-      .where('isComplete', '==', false)
-      .where('isAllow', '==', true)
+      .where('isCompleted', '==', false)
+      .where('isAllowed', '==', true)
       .get()
 
     // return new Promise((resolve, reject) => {

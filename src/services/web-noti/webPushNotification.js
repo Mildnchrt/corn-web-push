@@ -118,11 +118,11 @@ module.exports = {
     return {
       storeId: user && user.storeId || '',
       playerId: user && user.playerId || '',
-      isAllowed: user && user.isAllow || false,
-      isCompleted: user && user.isComplete || false,
+      isAllowed: user && user.isAllowed || false,
+      isCompleted: user && user.isCompleted || false,
       stage: user && user.stage || constant.STAGE.PRODUCT,
-      createdAt: user && user.createAt || '',
-      updatedAt: user && user.updateAt || '',
+      createdAt: user && user.createdAt || '',
+      updatedAt: user && user.updatedAt || '',
       dataOneSignal: user && user.dataOneSignal || {},
       dataSellsuki: user && user.dataSellsuki || {}
     }

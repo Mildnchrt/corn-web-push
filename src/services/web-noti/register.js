@@ -14,12 +14,12 @@ module.exports = {
 
   getStoreNoti: async function (storeIds) {
     let data = await sellsuki.getStoreNoti(storeIds)
-    return data.results
+    return data.data.results
   },
   
   createUser: async function (data) {
     let now = new Date()
-    let user = webPushNotification.userDataTransform({
+    let user = await webPushNotification.userDataTransform({
       storeId: data.storeId,
       playerId: data.playerId,
       isAllowed: data.isAllowed,
@@ -27,10 +27,9 @@ module.exports = {
       stage: '',
       createdAt: now,
       updatedAt: now,
-      dataOneSignal: data.userOneSignal,
-      dataSellsuki: data.userSellsuki
+      dataOneSignal: data.dataOneSignal,
+      dataSellsuki: data.dataSellsuki
     })
-
     let res = await firestore.createStore(data.storeId, user)
     return res
   }

@@ -84,13 +84,13 @@
           if (playerIdCurrent !== null) {
             document.getElementById('demo').innerHTML = playerIdCurrent
             OneSignal.push(['getNotificationPermission', function (permission) {
-              let isAllow = false
+              let isAllowed = false
               
               if (permission === 'granted') {
-                isAllow = true
+                isAllowed = true
               }
               
-              const res = httpGet('http://localhost:8005/api/register/'+ storeId + '/' + playerIdCurrent + '/' + isAllow)
+              const res = httpGet('http://localhost:8005/api/register/'+ storeId + '/' + playerIdCurrent + '/' + isAllowed)
               console.log('Add to FireStore : >>>>>>>>>>>>>>>>>>> ', res)
               if(res==='alreadyHaveUser' || res==='success') {
                 document.getElementById('register-button').style.display = 'none'

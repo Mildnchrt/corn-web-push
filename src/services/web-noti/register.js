@@ -1,7 +1,7 @@
 const firestore = require('../../library/firestore')
 const onesignal = require('../../library/onesignal')
 const sellsuki = require('../../library/sellsuki')
-const webPushNotification  = require('./webPushNotification')
+const webPushNotification = require('./webPushNotification')
 
 module.exports = {
   isPlayer: async function (storeId) {

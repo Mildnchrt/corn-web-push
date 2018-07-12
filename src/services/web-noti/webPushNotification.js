@@ -7,34 +7,20 @@ const { constant } = require('../../config')
 module.exports = {
   getUserNotComplete: async function () {
     let activeUserData = await firestore.getActiveUser()
-    return activeUserData
+    let returnData = []
+
+    return new Promise(function(resolve, reject) {
+      activeUserData.forEach((user) => {
+        returnData.push(user.data())
+      })
+      resolve(returnData)
+    })
   },
-
-  setDataStoreCollections: function (userNotDone) {
-    let userCollections = {}
-
-    if (userNotDone.docs.length > 0) {      
-      let userData = []
-      let str = userNotDone.docs.map((collections) => {
-        userData.push(collections.data())
-        return collections.data().storeId
-      }).join()
-
-      userCollections = {
-        storeIds: str,
-        data: userData
-      }
-    } 
-    return userCollections
-  },
-
   getUserFromSellsuki: async function (store) {
-    let user = await sellsuki.getStoreNoti(store)    
-    console.log(user);
+    let user = await sellsuki.getStoreNoti(store)   
     
     try {
-      // return user.results
-      // return user.results
+      return user.data.results
     } catch (error) {
       console.log(error)
     }
@@ -44,42 +30,37 @@ module.exports = {
         return store.storeId
       }).join()
   },
-  getStoreFromSellsuki: async function (usersNotDone) {
-    let results = []
-    let storeGroups = []
-    // console.log('usersNotDone', usersNotDone.docs.data().length)
-    //1st promise]
-      usersNotDone.forEach(async (user, index) => {
-        console.log('>>', user.data())
-        //keep 10
-    //     storeGroups.push(user.data())
-
-    //     //Condition if count is 10
-    //     if(index % 9 === 0 || index === usersNotDone.docs.length - 1) {
-    //       let str = this.mapStoreIdToString(storeGroups)
-    //       let dataSellsuki = await this.getUserFromSellsuki(str)
-
-    //       //2nd loop
-    //       dataSellsuki.results.forEach((data) => {
-    //         results[parseInt(data.store_id)] = data
-    //       })
-    //     }
-    })
-    // return Promise.all(results)
+  sliceStoreToCollection: function(usersNotDone) {
+    let storeCollections = []
+    // console.log(usersNotDone)
+    while(usersNotDone.length > 0) {
+      storeCollections.push(usersNotDone.slice(0, 10))
+      usersNotDone = usersNotDone.slice(10)
+    }
+    return storeCollections
   },
-  updateFirestoreAndSendNotification: function(usersNotDone, usersSellsuki, updateTime) {
-    
-    let stage = ''
-    usersNotDone.forEach((user) => {
-      //Get stage and update data to firestore
-      stage = webPushNotification.getUserStage(usersSellsuki[user.storeId])
-      this.updateDataToFirestore(user, usersSellsuki[user.storeId], stage, updateTime)
+  getStoreFromSellsuki: async function (storeCollections) {
+    let results = []
+  
+    for(i=0; i<storeCollections.length; i++) {
+      let str = this.mapStoreIdToString(storeCollections[i])
+      let data = await this.getUserFromSellsuki(str)
+      results.push(data)
+    }
 
-      //Push notification
+    return results.reduce((acc, val) => acc.concat(val), [])
+  },
+  updateFirestoreAndSendNotification: function(usersNotDone, storesSellsuki, updateTime) {
+    let stage = ''
+    for(i=0; i<usersNotDone.length; i++) {
+      let storeObj = storesSellsuki.find(obj => obj.store_id == '8')
+      stage = this.getUserStage(storeObj)
+      this.updateDataToFirestore(userdNotDone[i], storeObj, stage, updateTime)
+
       if(stage !== '') {
         this.pushNotification(user.data())
       }
-    })
+    }
   },
   getUserStage: function (user) {
     let stage = ''

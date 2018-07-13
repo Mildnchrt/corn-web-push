@@ -2,11 +2,16 @@ const libFirestore  = require('../../../library/firestore')
 const sellsuki = require('../../../library/sellsuki')
 const libOnesignal = require('../../../library/onesignal')
 
-sellsuki.getStoreNoti= jest.fn().mockReturnValue({ data: { results: {} } })
+// sellsuki.getStoreNoti = jest.fn().mockReturnValue({ data: { results: {} } })
 libFirestore.getActiveUser = jest.fn().mockReturnValue({})
 libOnesignal.sendNotification = jest.fn()
 libFirestore.updateData = jest.fn()
+sellsuki.getStoreNoti = jest.fn()
+
 const { webPushNotification } = require('../../../services/web-noti')
+webPushNotification.concatStoreIds = jest.fn().mockReturnValue('1')
+webPushNotification.getStoreNoti = jest.fn().mockReturnValue([{store_id: 1}])
+
 
 describe('describe services/webPushnotification endpoint', () => {
   test ('get user stage', async () => {
@@ -76,10 +81,20 @@ describe('describe services/webPushnotification endpoint', () => {
 
     expect(webPushNotification.storeDataTransform(input)).toEqual(output)
   })
+  // test ('getStoreNoti function', async () => {
+  //   let results = await webPushNotification.getStoreNoti('1')
+  //   let expectedData = [{store_id: 1}]
 
-  test ('get user from sellsuki data', async () => {
-    await webPushNotification.getStoteSellukiNoti('1')
-    expect(sellsuki.getStoreNoti.mock.calls.length).toBe(1)
+  //   expect(results).toEqual(expectedData)
+  // })
+
+  test ('getStoteSellukiNoti function', async () => {
+    let results = await webPushNotification.getStoreSellukiNoti([[{storeId: '1'}]])
+    let expectedData = [{store_id: 1}]
+
+    expect(webPushNotification.concatStoreIds.mock.calls.length).toBe(1)
+    expect(webPushNotification.getStoreNoti.mock.calls.length).toBe(1)
+    expect(results).toEqual(expectedData)
   })
 
   test ('update data to Firestore', () => {
@@ -93,10 +108,10 @@ describe('describe services/webPushnotification endpoint', () => {
     expect(libFirestore.updateData.mock.calls.length).toBe(1)
   })
 
-  test ('get user not complete', async () => {
-    await webPushNotification.getActiveStore()
-    expect(libFirestore.getActiveUser.mock.calls.length).toBe(1)
-  })
+  // test ('get user not complete', async () => {
+  //   await webPushNotification.getActiveStore()
+  //   expect(libFirestore.getActiveUser.mock.calls.length).toBe(1)
+  // })
 
   test ('push notification', async () => {
     let user = {}

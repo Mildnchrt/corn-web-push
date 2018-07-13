@@ -35,10 +35,10 @@ module.exports = {
     }
     return result
   },
-  getStoteSellukiNoti: async function (stores) {
+  getStoreSellukiNoti: async function (groupStores) {
     let results = []
-    for(i=0; i < stores.length; i++) {
-      let storeIds = this.concatStoreIds(stores[i])
+    for(i=0; i < groupStores.length; i++) {
+      let storeIds = this.concatStoreIds(groupStores[i])
       let res = await this.getStoreNoti(storeIds)
       results.push(res)
     }

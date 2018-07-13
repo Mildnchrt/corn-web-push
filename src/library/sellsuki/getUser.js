@@ -1,15 +1,11 @@
-const axios = require('axios')
+const { fetch } = require('./http_request')
+const { constant } = require('../../config')
 
-module.exports = async function (storeId) {
-  return new Promise((resolve, reject) => {
-    resolve(
-      axios.get('http://192.168.1.254:8003/store/get-store-notification-mock?store_ids[]=' + storeId)
-        .then(function (response) {
-          return response
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
-    )
-  })
+module.exports = {
+  async getStoreNoti (storeId) {
+    return await fetch(constant.SERVER.SELLSUKI_URL + storeId)
+      .catch((e) => { 
+        console.log(e.stack) 
+      })
+  }
 }

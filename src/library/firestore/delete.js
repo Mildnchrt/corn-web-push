@@ -1,13 +1,15 @@
-// const model = require('../../repositories')
-// const { db } = require('../../utils/constant')
-const userRef = require('./config')
+const storeRef = require('../../config')
 
-module.exports = async function (storeId) {
-  userRef
-    .init()
-    .doc(storeId)
-    .delete()
-  return {}
+module.exports = {
+  deleteData (storeId) {
+    storeRef.database
+      .init()
+      .doc(storeId)
+      .delete()
+      
+    return {
+      success: 1, 
+      message: 'Deleted success.'
+    }
+  }
 }
-
-

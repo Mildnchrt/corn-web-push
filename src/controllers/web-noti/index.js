@@ -1,5 +1,9 @@
-const cronWebPush = require('./cronWebPush')
+const cronController = require('./cronWebPush')
+const uiController = require('./ui')
+const registerController = require('./register')
 
 module.exports = {
-  cronWebPush
+  cronController,
+  uiController,
+  registerController
 }

@@ -1,6 +1,7 @@
 const webPushNotification = require('./webPushNotification')
-console.log('index service')
+const register = require('./register')
 
 module.exports = {
-  webPushNotification
+  webPushNotification,
+  register
 }

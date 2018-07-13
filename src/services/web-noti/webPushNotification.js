@@ -1,99 +1,130 @@
-const { getFilterUser, updateData }  = require('../../library/firestore')
-const { getUser } = require('../../library/sellsuki')
-const { sendNotification }  = require('../../library/onesignal')
-
-const { STAGE, ONESIGNAL } = require('../../config/constant')
+const firestore = require('../../library/firestore')
+const sellsuki = require('../../library/sellsuki')
+const onesignal  = require('../../library/onesignal')
+const { constant } = require('../../config')
 
 module.exports = {
-  getUserNotComplete: function () {
-    var data = getFilterUser('isComplete', '==', false)
-    return data
-  },
-
-  getStringStore: function (userNotDone) {
-    var str = ''
-    var isFirst = true
-    userNotDone.forEach((collections) => {
-      if (isFirst) {
-        str += collections.data().storeId
-        isFirst = false
-      } else {
-        str += ',' + collections.data().storeId
-      }
+  getActiveStore: async function () {
+    let activeUserData = await firestore.getActiveUser()
+    let returnData = []
+    return new Promise(function(resolve, reject) {
+      activeUserData.docs.forEach((user) => {
+        returnData.push(user.data())
+      })
+      resolve(returnData)
     })
-    return str
   },
-
-  getUserFromSellsuki: async function (store) {
-    // console.log('store ', store)
-    var user = await getUser(store)
-    // console.log('user ', user.data.results)
-    return user.data.results
+  getStoreNoti: async function (store) {
+    let res = await sellsuki.getStoreNoti(store)
+    try {
+      return res.data.results
+    } catch (error) {
+      console.log(error)
+    }
   },
-  getStage: function (user) {
+  concatStoreIds: function(stores) {
+    return stores.map((store) => {
+        return store.storeId
+      }).join()
+  },
+  groupStores: function(stores) {
+    let result = []
+    while(stores.length > 0) {
+      result.push(stores.slice(0, 10))
+      stores = stores.slice(10)
+    }
+    return result
+  },
+  getStoreSellukiNoti: async function (groupStores) {
+    let results = []
+    for(i=0; i < groupStores.length; i++) {
+      let storeIds = this.concatStoreIds(groupStores[i])
+      let res = await this.getStoreNoti(storeIds)
+      results.push(res)
+    }
+    return results.reduce((acc, val) => acc.concat(val), [])
+  },
+  updateStoreAndPushNoti: function(usersNotDone, storesSellsuki) {
     let stage = ''
-  
+    let now = new Date()
+    // console.log(usersNotDone)
+    for(let i=0; i<usersNotDone.length; i++) {
+      let storeObj = storesSellsuki.find(obj => obj.store_id == usersNotDone[i].storeId)
+      stage = this.getStoreStage(storeObj)
+      this.updateStore(usersNotDone[i], storeObj, stage, now)
+      if(stage !== constant.STAGE.COMPLETED.STAGE_NAME) {
+        this.pushNotification(usersNotDone[i], stage)
+      }
+    }
+
+  },
+  getStoreStage: function (user) {
+    let stage = ''
     if (user.count_product <= 1) {
-      stage = STAGE.PRODUCT
-    } else if (user.count_store_payment_channel === 0) {
-      stage = STAGE.PAYMENT
+      stage = constant.STAGE.PRODUCT.STAGE_NAME
+    } else if (user.count_store_payment_channel <= 0) {
+      stage = constant.STAGE.PAYMENT.STAGE_NAME
     } else if (user.count_store_shipping_type <= 1) {
-      stage = STAGE.SHIPPING
+      stage = constant.STAGE.SHIPPING.STAGE_NAME
+    } else {
+      stage = constant.STAGE.COMPLETED.STAGE_NAME
     }
     return stage
   },
 
-  updateDataToFireStore: function (user, stage, date) {
-    isComplete = false
-
-    if (stage === '') {
-      stage = '3'
+  updateStore: function (store, storeSellsukiNoti, stage, updateTime) {
+    let isCompleted = false
+    if (stage === constant.STAGE.COMPLETED.STAGE_NAME) {
       isComplete = true
     }
+    
+    let data = this.storeDataTransform({ 
+      storeId: storeSellsukiNoti.store_id, 
+      playerId: store.playerId, 
+      isAllowed: store.isAllowed, 
+      isCompleted: isCompleted, 
+      stage: stage,
+      createdAt: store.createAt,
+      updatedAt: updateTime,
+      dataOneSignal: store.dataOneSignal,
+      dataSellsuki: storeSellsukiNoti
+    })
 
-    let data = { dataSellsuki: user, 
-      stage: stage, 
-      updateAt: date, 
-      isComplete: isComplete 
-    }
-
-    updateData( user.store_id, data )
-  
+    firestore.updateData(data.storeId, data)
   },
-  pushNotification: async function (user) {
-    let heading, content
-    // var url = ''
-    if (user.data().dataOneSignal.language === 'th') {
-      if (user.data().stage === STAGE.PRODUCT) {
-        heading = 'อยากเริ่มขาย ต้องเพิ่มสินค้าก่อนนะ!'
-        content = 'เริ่มการขายผ่าน Sellsuki โดยการเพิ่มสินค้าในสต๊อกสินค้า'
-      } else if (user.data().stage === STAGE.SHIPPING) {
-        heading = 'เพิ่มช่องทางชำระเงินสำหรับลูกค้าหรือยัง?'
-        content = 'เพิ่มบัญชีธนาคารหรือช่องทางอื่นๆ เพื่อรับชำระเงินจากลูกค้าหลังยืนยันออเดอร์'
-      } else if (user.data().stage === STAGE.PAYMENT) {
-        heading = 'อย่าลืมเพิ่มวิธีจัดส่งและค่าส่งสินค้าด้วยนะ'
-        content = 'เพิ่มวิธีจัดส่งสินค้าพร้อมค่าจัดส่งแบบต่างๆ ให้ลูกค้าเลือกรับของได้ตามสะดวก'
-      }
-    } else {
-      if (user.data().stage === STAGE.PRODUCT) {
-        heading = 'Ready to sell? let’s add your products first!'
-        content = 'Add products into Sellsuki inventory to run your online store.'
-      } else if (user.data().stage === STAGE.SHIPPING) {
-        heading = 'Have you added payment methods?'
-        content = 'Provide your payment methods for money receiving.'
-      } else if (user.data().stage === STAGE.PAYMENT) {
-        heading = 'Do not forget adding delivery options.'
-        content = 'More delivery options, more customer satisfaction.'
-      }
-    }
 
-    var message = {
-      app_id: ONESIGNAL.APP_ID,
+  pushNotification: function (user, stage) {
+    let heading, content
+    if (user.dataOneSignal) {
+      let userLanguage = user.dataOneSignal.language
+      heading = constant.STAGE[stage][userLanguage].HEADING
+      content = constant.STAGE[stage][userLanguage].CONTENT
+    }
+      
+    onesignal.sendNotification({
+      app_id: constant.ONESIGNAL.APP_ID,
       headings: { 'en': heading },
       contents: { 'en': content },
-      include_player_ids: [ user.data().playerId ]
+      include_player_ids: [ user.playerId ]
+    })
+
+    return {
+      success: 1,
+      message: 'success.'
     }
-    sendNotification(message)
-    return true
   },
+  
+  storeDataTransform: function (user) {
+    return {
+      storeId: user && user.storeId || '',
+      playerId: user && user.playerId || '',
+      isAllowed: user && user.isAllowed || false,
+      isCompleted: user && user.isCompleted || false,
+      stage: user && user.stage || constant.STAGE.PRODUCT.STAGE_NAME,
+      createdAt: user && user.createdAt || '',
+      updatedAt: user && user.updatedAt || '',
+      dataOneSignal: user && user.dataOneSignal || {},
+      dataSellsuki: user && user.dataSellsuki || {}
+    }
+  }
 }

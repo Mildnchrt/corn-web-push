@@ -29,9 +29,8 @@ app.get('/', function (req, res) {
     uptime: uptime,
     status: 'OK'
   }
-  res.send(server)
+  res.render(server)
 })
-
 // generating API route
 Object.keys(routeConfig).forEach((key, index) => {
   routeConfig[key].forEach((route) => {

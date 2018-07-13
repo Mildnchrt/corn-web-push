@@ -7,3 +7,4 @@
 !.eslintignore
 !.eslintrc.json
 !.tasks.json
+.DS_Store

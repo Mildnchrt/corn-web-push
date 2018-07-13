@@ -2,11 +2,17 @@ const libFirestore  = require('../../../library/firestore')
 const sellsuki = require('../../../library/sellsuki')
 const libOnesignal = require('../../../library/onesignal')
 
-sellsuki.getStoreNoti= jest.fn().mockReturnValue({ data: { results: {} } })
+// sellsuki.getStoreNoti = jest.fn().mockReturnValue({ data: { results: {} } })
 libFirestore.getActiveUser = jest.fn().mockReturnValue({})
 libOnesignal.sendNotification = jest.fn()
 libFirestore.updateData = jest.fn()
+sellsuki.getStoreNoti = jest.fn()
+
 const { webPushNotification } = require('../../../services/web-noti')
+webPushNotification.concatStoreIds = jest.fn().mockReturnValue('1')
+webPushNotification.getStoreNoti = jest.fn().mockReturnValue([{store_id: 1}])
+webPushNotification.getActiveStore = jest.fn().mockReturnValue({})
+
 
 describe('describe services/webPushnotification endpoint', () => {
   test ('get user stage', async () => {
@@ -18,7 +24,7 @@ describe('describe services/webPushnotification endpoint', () => {
       STAGE_NAME: 'PRODUCT'
     }
 
-    expect(webPushNotification.getUserStage(user)).toEqual(output.STAGE_NAME)
+    expect(webPushNotification.getStoreStage(user)).toEqual(output.STAGE_NAME)
   })
 
   test ('sent null data to change data format', () => {
@@ -46,7 +52,7 @@ describe('describe services/webPushnotification endpoint', () => {
       dataSellsuki: {}
     }
 
-    expect(webPushNotification.userDataTransform(input)).toEqual(output)
+    expect(webPushNotification.storeDataTransform(input)).toEqual(output)
   })
 
   test ('sent data to change data format', () => {
@@ -74,12 +80,22 @@ describe('describe services/webPushnotification endpoint', () => {
       dataSellsuki: { test: 'test' }
     }
 
-    expect(webPushNotification.userDataTransform(input)).toEqual(output)
+    expect(webPushNotification.storeDataTransform(input)).toEqual(output)
+  })
+  test ('getStoreNoti function', async () => {
+    let results = await webPushNotification.getStoreNoti('1')
+    let expectedData = [{store_id: 1}]
+
+    expect(results).toEqual(expectedData)
   })
 
-  test ('get user from sellsuki data', async () => {
-    await webPushNotification.getUserFromSellsuki('1')
-    expect(sellsuki.getStoreNoti.mock.calls.length).toBe(1)
+  test ('getStoteSellukiNoti function', async () => {
+    let results = await webPushNotification.getStoreSellukiNoti([[{storeId: '1'}]])
+    let expectedData = [{store_id: 1}]
+
+    expect(webPushNotification.concatStoreIds.mock.calls.length).toBe(1)
+    expect(webPushNotification.getStoreNoti.mock.calls.length).toBe(2)
+    expect(results).toEqual(expectedData)
   })
 
   test ('update data to Firestore', () => {
@@ -88,14 +104,17 @@ describe('describe services/webPushnotification endpoint', () => {
     let stage = ''
     let isCompleted = ''
     let time = ''
-    let result = webPushNotification.updateDataToFirestore(userFirestore, userSellsuki, stage, time)
+    let result = webPushNotification.updateStore(userFirestore, userSellsuki, stage, time)
     
     expect(libFirestore.updateData.mock.calls.length).toBe(1)
   })
 
   test ('get user not complete', async () => {
-    await webPushNotification.getUserNotComplete()
-    expect(libFirestore.getActiveUser.mock.calls.length).toBe(1)
+    let results = await webPushNotification.getActiveStore()
+    let expectedData = {}
+
+    // expect(libFirestore.getActiveUser.mock.calls.length).toBe(2)
+    expect(results).toEqual(expectedData)
   })
 
   test ('push notification', async () => {
@@ -103,31 +122,5 @@ describe('describe services/webPushnotification endpoint', () => {
     let result = webPushNotification.pushNotification(user)
 
     expect(libOnesignal.sendNotification.mock.calls.length).toBe(1)
-  })
-
-  test ('set data store collections is empty', async () => {
-    let userNotDone = { 
-      docs: []
-     }
-
-    expect(webPushNotification.setDataStoreCollections(userNotDone)).toEqual({})
-  })
-
-  test ('set data store collections', async () => {
-    let userNotDone = {
-      docs: [
-        { data: jest.fn().mockReturnValue({ storeId: '1' }) },
-        { data: jest.fn().mockReturnValue({ storeId: '2' }) }
-      ]
-    }
-
-    let output = {
-      'data': 
-        [ { 'storeId': '1' }, 
-        { 'storeId': '2' } ], 
-      'storeIds': '1,2'
-    }
-
-    expect(webPushNotification.setDataStoreCollections(userNotDone)).toEqual(output)
   })
 })

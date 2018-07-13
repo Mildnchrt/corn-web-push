@@ -19,7 +19,7 @@ module.exports = {
   
   createUser: async function (data) {
     let now = new Date()
-    let user = await webPushNotification.userDataTransform({
+    let user = await webPushNotification.storeDataTransform({
       storeId: data.storeId,
       playerId: data.playerId,
       isAllowed: data.isAllowed,

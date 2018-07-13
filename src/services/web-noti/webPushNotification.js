@@ -4,39 +4,61 @@ const onesignal  = require('../../library/onesignal')
 const { constant } = require('../../config')
 
 module.exports = {
-  getUserNotComplete: async function () {
-    let activeUserData = await firestore.getActiveUser()    
-    return activeUserData
+  getActiveStore: async function () {
+    let activeUserData = await firestore.getActiveUser()
+    let returnData = []
+    return new Promise(function(resolve, reject) {
+      activeUserData.docs.forEach((user) => {
+        returnData.push(user.data())
+      })
+      resolve(returnData)
+    })
   },
-
-  setDataStoreCollections: function (userNotDone) {    
-    let userCollections = {}
-
-    if (userNotDone.docs.length > 0) {      
-      let userData = []
-      let str = userNotDone.docs.map((collections) => {
-        userData.push(collections.data())
-        return collections.data().storeId
-      }).join()
-
-      userCollections = {
-        storeIds: str,
-        data: userData
-      }
-    } 
-    return userCollections
-  },
-
-  getUserFromSellsuki: async function (store) {
-    let user = await sellsuki.getStoreNoti(store)    
+  getStoreNoti: async function (store) {
+    let res = await sellsuki.getStoreNoti(store)
     try {
-      return user.data.results
+      return res.data.results
     } catch (error) {
       console.log(error)
     }
   },
+  concatStoreIds: function(stores) {
+    return stores.map((store) => {
+        return store.storeId
+      }).join()
+  },
+  groupStores: function(stores) {
+    let result = []
+    while(stores.length > 0) {
+      result.push(stores.slice(0, 10))
+      stores = stores.slice(10)
+    }
+    return result
+  },
+  getStoreSellukiNoti: async function (groupStores) {
+    let results = []
+    for(i=0; i < groupStores.length; i++) {
+      let storeIds = this.concatStoreIds(groupStores[i])
+      let res = await this.getStoreNoti(storeIds)
+      results.push(res)
+    }
+    return results.reduce((acc, val) => acc.concat(val), [])
+  },
+  updateStoreAndPushNoti: function(usersNotDone, storesSellsuki) {
+    let stage = ''
+    let now = new Date()
+    // console.log(usersNotDone)
+    for(let i=0; i<usersNotDone.length; i++) {
+      let storeObj = storesSellsuki.find(obj => obj.store_id == usersNotDone[i].storeId)
+      stage = this.getStoreStage(storeObj)
+      this.updateStore(usersNotDone[i], storeObj, stage, now)
+      if(stage !== constant.STAGE.COMPLETED.STAGE_NAME) {
+        this.pushNotification(usersNotDone[i], stage)
+      }
+    }
 
-  getUserStage: function (user) {
+  },
+  getStoreStage: function (user) {
     let stage = ''
     if (user.count_product <= 1) {
       stage = constant.STAGE.PRODUCT.STAGE_NAME
@@ -44,56 +66,55 @@ module.exports = {
       stage = constant.STAGE.PAYMENT.STAGE_NAME
     } else if (user.count_store_shipping_type <= 1) {
       stage = constant.STAGE.SHIPPING.STAGE_NAME
+    } else {
+      stage = constant.STAGE.COMPLETED.STAGE_NAME
     }
     return stage
   },
 
-  updateDataToFirestore: function (userFirestore, userSellsuki, stage, updateTime) {
+  updateStore: function (store, storeSellsukiNoti, stage, updateTime) {
     let isCompleted = false
-    if (stage === '') {
-      stage = constant.STAGE.SHIPPING.STAGE_NAME
+    if (stage === constant.STAGE.COMPLETED.STAGE_NAME) {
       isComplete = true
     }
     
-    let data = this.userDataTransform({ 
-      storeId: userSellsuki.store_id, 
-      playerId: userFirestore.playerId, 
-      isAllowed: userFirestore.isAllowed, 
+    let data = this.storeDataTransform({ 
+      storeId: storeSellsukiNoti.store_id, 
+      playerId: store.playerId, 
+      isAllowed: store.isAllowed, 
       isCompleted: isCompleted, 
       stage: stage,
-      createdAt: userFirestore.createAt,
+      createdAt: store.createAt,
       updatedAt: updateTime,
-      dataOneSignal: userFirestore.dataOneSignal,
-      dataSellsuki: userSellsuki
+      dataOneSignal: store.dataOneSignal,
+      dataSellsuki: storeSellsukiNoti
     })
 
     firestore.updateData(data.storeId, data)
   },
 
-  pushNotification: function (user) {
+  pushNotification: function (user, stage) {
     let heading, content
-    let userStage, userLanguage
-
     if (user.dataOneSignal) {
-      userStage = user.stage
-      userLanguage = user.dataOneSignal.language
-
-      heading = constant.STAGE[userStage][userLanguage].HEADING
-      content = constant.STAGE[userStage][userLanguage].CONTENT
+      let userLanguage = user.dataOneSignal.language
+      heading = constant.STAGE[stage][userLanguage].HEADING
+      content = constant.STAGE[stage][userLanguage].CONTENT
     }
-    
-    let message = {
+      
+    onesignal.sendNotification({
       app_id: constant.ONESIGNAL.APP_ID,
       headings: { 'en': heading },
       contents: { 'en': content },
       include_player_ids: [ user.playerId ]
+    })
+
+    return {
+      success: 1,
+      message: 'success.'
     }
-    
-    onesignal.sendNotification(message)
-    return 'success: 1'
   },
   
-  userDataTransform: function (user) {
+  storeDataTransform: function (user) {
     return {
       storeId: user && user.storeId || '',
       playerId: user && user.playerId || '',

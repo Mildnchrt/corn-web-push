@@ -10,7 +10,7 @@ module.exports = async function (request, response) {
     let res = await register.createUser({ 
       storeId: params.storeid, 
       playerId: params.playerid, 
-      isAllowed: params.allow,
+      isAllowed: Boolean(params.allow),
       dataOneSignal: playerData,
       dataSellsuki: storeData
     })

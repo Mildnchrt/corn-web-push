@@ -4,7 +4,7 @@ module.exports = async function () {
   
   let stores = await webPushNotification.getActiveStore()
   let storeCollections = webPushNotification.groupStores(stores)
-  let storesSellsukiNoti = await webPushNotification.getStoteSellukiNoti(storeCollections)
+  let storesSellsukiNoti = await webPushNotification.getStoreSellukiNoti(storeCollections)
   webPushNotification.updateStoreAndPushNoti(stores, storesSellsukiNoti)
   return {
     success: 1, 

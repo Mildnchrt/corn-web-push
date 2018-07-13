@@ -17,7 +17,7 @@ let storesSellsuki = [
 
 webPushNotification.getActiveStore = jest.fn().mockReturnValue(usersNotDone)
 webPushNotification.groupStores = jest.fn().mockReturnValue(firestoreCollections)
-webPushNotification.getStoteSellukiNoti = jest.fn().mockReturnValue(storesSellsuki)
+webPushNotification.getStoreSellukiNoti = jest.fn().mockReturnValue(storesSellsuki)
 webPushNotification.updateStoreAndPushNoti = jest.fn()
 
 const { cronController } = require('../../../controllers/web-noti')
@@ -27,7 +27,7 @@ describe('describe controller/cronWebPush endpoint', () => {
     let res = await cronController()
     expect(webPushNotification.getActiveStore.mock.calls.length).toBe(1)
     expect(webPushNotification.groupStores.mock.calls.length).toBe(1)
-    expect(webPushNotification.getStoteSellukiNoti.mock.calls.length).toBe(1)
+    expect(webPushNotification.getStoreSellukiNoti.mock.calls.length).toBe(1)
     expect(webPushNotification.updateStoreAndPushNoti.mock.calls.length).toBe(1)
     expect(res).toEqual({
       success: 1, 

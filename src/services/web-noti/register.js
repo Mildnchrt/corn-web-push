@@ -4,8 +4,18 @@ const sellsuki = require('../../library/sellsuki')
 const webPushNotification = require('./webPushNotification')
 
 module.exports = {
-  isPlayer: async function (storeId) {
-    return await firestore.getStoreById(storeId)
+  isPlayer: function (storeId) {
+    firestore.getStoreById(storeId)
+    .then((doc) => {
+      if (doc.exists) {
+        console.log('Document data:', doc.data())
+        return doc.data()
+      }
+    })
+    .catch ((e) => {
+      console.log('No such document!')
+      return false
+    })
   },
 
   getPlayer: async function (playerId) {

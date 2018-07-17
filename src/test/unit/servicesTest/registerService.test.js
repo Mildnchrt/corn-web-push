@@ -3,19 +3,23 @@ const libOnesignal = require('../../../library/onesignal')
 const libSellsuki = require('../../../library/sellsuki')
 const webPushNotification  = require('../../../services/web-noti/webPushNotification')
 
-libFirestore.getStoreById = jest.fn().mockReturnValueOnce(false).mockReturnValue({ doc: { data: {} } })
 libFirestore.createStore = jest.fn().mockReturnValue('success')
 libOnesignal.getDevice = jest.fn().mockReturnValue({ response: { data: {} } })
 libSellsuki.getStoreNoti= jest.fn().mockReturnValue({ data: { results: {} } })
+libFirestore.getStoreById = jest.fn(() => Promise.reject(false))
+
 webPushNotification.storeDataTransform = jest.fn().mockReturnValue({})
 
 const { isPlayer, createUser, getPlayer, getStoreNoti } = require('../../../services/web-noti/register')
 
 describe ('describe services/register endpoint', async () => {
-  test ('check playerId dont have in Firestore', async () => { 
-    const result = await isPlayer('$$')
+  test.only ('check playerId dont have in Firestore', async () => { 
+    // const result = await isPlayer('$$')
+    // expect(result).toBe(false)
+    // const result = await isPlayer('$$').catch(err => expect(err).toBe(false))
 
-    expect(result).toBe(false)
+    console.log(libFirestore.getStoreById)
+    
     expect(libFirestore.getStoreById.mock.calls.length).toBe(1)
   })
 

@@ -4,22 +4,25 @@ const sellsuki = require('../../library/sellsuki')
 const webPushNotification = require('./webPushNotification')
 
 module.exports = {
-  isPlayer: function (storeId) {
-    firestore.getStoreById(storeId)
-    .then((doc) => {
-      if (doc.exists) {
-        console.log('Document data:', doc.data())
-        return doc.data()
-      }
-    })
-    .catch ((e) => {
-      console.log('No such document!')
-      return false
-    })
+  isPlayer: async function (storeId) {
+    await firestore.getStoreById(storeId)
+      .then((doc) => {
+        if (doc.exists) {
+          console.log('Document data:', doc.data())
+          return doc.data()
+        }
+      })
+      .catch ((e) => {
+        console.log('No such document!')
+        return false
+      })
   },
 
   getPlayer: async function (playerId) {
     return await onesignal.getDevice(playerId)
+      .catch((e) => { 
+        console.log(e.stack) 
+      })
   },
 
   getStoreNoti: async function (storeIds) {

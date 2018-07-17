@@ -6,17 +6,5 @@ module.exports = {
       .init()
       .doc(storeId)
       .set(data)
-      .then(function () {
-        return {
-          success: 1,
-          message: 'Created success.'
-        }
-      })
-      .catch(function () {
-        return {
-          success: 0,
-          message: 'Fail to create.'
-        }
-      })
   }
 }

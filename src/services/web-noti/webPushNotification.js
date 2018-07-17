@@ -6,6 +6,14 @@ const { constant } = require('../../config')
 module.exports = {
   getActiveStore: async function () {
     let activeUserData = await firestore.getActiveUser()
+      .then((data)=> {
+        return data
+      })
+      .catch((e) => {
+        console.log(e)
+        return {}
+      })
+      
     let returnData = []
     return new Promise(function(resolve, reject) {
       activeUserData.docs.forEach((user) => {

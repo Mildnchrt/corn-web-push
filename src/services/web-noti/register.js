@@ -41,6 +41,18 @@ module.exports = {
       dataSellsuki: data.dataSellsuki
     })
     let res = await firestore.createStore(data.storeId, user)
+      .then(function () {
+        return {
+          success: 1,
+          message: 'Created success.'
+        }
+      })
+      .catch(function () {
+        return {
+          success: 0,
+          message: 'Fail to create.'
+        }
+      })
     return res
   }
 }

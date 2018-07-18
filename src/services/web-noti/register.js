@@ -5,24 +5,22 @@ const webPushNotification = require('./webPushNotification')
 
 module.exports = {
   isPlayer: async function (storeId) {
-    await firestore.getStoreById(storeId)
+    return await firestore.getStoreById(storeId)
       .then((doc) => {
         if (doc.exists) {
           console.log('Document data:', doc.data())
-          return doc.data()
+          return true
+        } else {
+          console.log('No such document!')
+          return false
         }
-      })
-      .catch ((e) => {
-        console.log('No such document!')
-        return false
+      }).catch((error) =>{
+        console.log(error)
       })
   },
 
   getPlayer: async function (playerId) {
     return await onesignal.getDevice(playerId)
-      .catch((e) => { 
-        console.log(e.stack) 
-      })
   },
 
   getStoreNoti: async function (storeIds) {

@@ -6,5 +6,6 @@ module.exports = {
       .init()
       .doc(storeId)
       .get()
+
   }
 }

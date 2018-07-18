@@ -2,7 +2,7 @@ const { registerController } = require('../../../controllers/web-noti')
 const { register } = require('../../../services/web-noti/')
 
 register.isPlayer = jest.fn().mockReturnValueOnce(true).mockReturnValue(false)
-register.createUser = jest.fn().mockReturnValue('success')
+register.createUser = jest.fn().mockReturnValue({success: 1, message: 'Created success.'})
 
 let request = {
  params: {
@@ -31,6 +31,6 @@ describe('describe controller/register endpoint', async () => {
 
     expect(register.isPlayer.mock.calls.length).toBe(2)
     expect(register.createUser.mock.calls.length).toBe(1)
-    expect(result).toBe('success')  
+    expect(result).toEqual({success: 1, message: 'Created success.'})
   })
 })

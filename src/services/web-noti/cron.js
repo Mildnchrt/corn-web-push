@@ -67,7 +67,7 @@ module.exports = {
 
   },
   getStoreStage: function (user) {
-    let stage = ''
+    let stage = ''    
     if (user.count_product <= 1) {
       stage = constant.STAGE.PRODUCT.STAGE_NAME
     } else if (user.count_store_payment_channel <= 0) {

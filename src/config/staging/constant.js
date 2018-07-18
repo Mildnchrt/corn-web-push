@@ -55,5 +55,8 @@ module.exports = {
   },
   SERVER: {
     SELLSUKI_URL: 'http://192.168.1.254:8003/store/get-store-notification?store_ids[]='
+  },
+  SENTRY: {
+    SENTRY_URL: 'https://a029a561680b488cb7b345a23b20114a@sentry.io/1244609'
   }
 }

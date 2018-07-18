@@ -5,6 +5,7 @@ module.exports = async function (request, response) {
   let hasDataFirestore = await register.isPlayer(params.storeid)
   if (!hasDataFirestore) {
     let storeData = await register.getStoreNoti(params.storeid)
+    console.log('STORDATA>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', storeData)
     let playerData = await register.getPlayer(params.playerid)
     let res = await register.createUser({ 
       storeId: params.storeid, 

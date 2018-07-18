@@ -7,6 +7,7 @@ module.exports = {
   isPlayer: async function (storeId) {
     return await firestore.getStoreById(storeId)
       .then((doc) => {
+        console.log('DATA>>>>>>', doc)
         if (doc.exists) {
           console.log('Document data:', doc.data())
           return true

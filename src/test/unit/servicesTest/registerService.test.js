@@ -1,12 +1,13 @@
 const libFirestore = require('../../../library/firestore')
 const libOnesignal = require('../../../library/onesignal')
 const libSellsuki = require('../../../library/sellsuki')
-const webPushNotification  = require('../../../services/web-noti/webPushNotification')
+const webPushNotification  = require('../../../services/web-noti/cron')
 
-libFirestore.getStoreById = jest.fn().mockReturnValueOnce(false).mockReturnValue({ doc: { data: {} } })
-libFirestore.createStore = jest.fn().mockReturnValue('success')
+libFirestore.createStore = jest.fn().mockResolvedValue({})
 libOnesignal.getDevice = jest.fn().mockReturnValue({ response: { data: {} } })
 libSellsuki.getStoreNoti= jest.fn().mockReturnValue({ data: { results: {} } })
+libFirestore.getStoreById = jest.fn().mockResolvedValueOnce({}).mockResolvedValueOnce({doc: {data: jest.fn()}})
+
 webPushNotification.storeDataTransform = jest.fn().mockReturnValue({})
 
 const { isPlayer, createUser, getPlayer, getStoreNoti } = require('../../../services/web-noti/register')
@@ -14,14 +15,12 @@ const { isPlayer, createUser, getPlayer, getStoreNoti } = require('../../../serv
 describe ('describe services/register endpoint', async () => {
   test ('check playerId dont have in Firestore', async () => { 
     const result = await isPlayer('$$')
-
-    expect(result).toBe(false)
+    expect(result).toEqual(false)
     expect(libFirestore.getStoreById.mock.calls.length).toBe(1)
   })
 
   test ('check playerId already have in Firestore', async () => { 
-    const result = await isPlayer('1')
-    expect(result).toEqual({ doc: { data: {} } })
+    await isPlayer('1')
     expect(libFirestore.getStoreById.mock.calls.length).toBe(2)
   })
   
@@ -36,7 +35,7 @@ describe ('describe services/register endpoint', async () => {
       }
     )
 
-    expect(result).toBe('success')
+    expect(result).toEqual({ success: 1, message: 'Created success.'})
     expect(libOnesignal.getDevice.mock.calls.length).toBe(1)
     expect(libSellsuki.getStoreNoti.mock.calls.length).toBe(1)
     expect(webPushNotification.storeDataTransform.mock.calls.length).toBe(1)

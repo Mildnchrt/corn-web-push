@@ -9,6 +9,7 @@ const Raven = require('raven')
 const { constant } = require('./src/config')
 
 const app = express()
+const oldContext = {}, someContext = {}
 // Must configure Raven before doing anything else with it
 Raven.config(constant.SENTRY.SENTRY_URL).install()
 
@@ -37,17 +38,17 @@ app.get('/', function mainHandler (req, res) {
       started: startAt,
       uptime: uptime,
       status: 'OK'
-    }
+    }    
     res.render(server)
   } catch (e) {
-    Raven.captureException(e)
+      Raven.captureException(e)
   }
 })
 
 // generating API route
 Object.keys(routeConfig).forEach((key, index) => {
   routeConfig[key].forEach((route) => {
-    const {methods ,path ,controller} = route
+    const {methods ,path ,controller} = route    
     router[methods.toLowerCase()](`/${key}${path}`, catchAsyncErrors(controller))
   })
 })
@@ -62,7 +63,7 @@ app.use(errorExceptionMiddleware)
 // Optional fallthrough error handler
 app.use(function onError(err, req, res, next) {
   // The error id is attached to `res.sentry` to be returned
-  // and optionally displayed to the user for support.
+  // and optionally displayed to the user for support.  
   res.statusCode = 500
   res.end(res.sentry + '\n')
 })

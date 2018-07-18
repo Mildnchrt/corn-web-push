@@ -6,7 +6,7 @@ const webPushNotification  = require('../../../services/web-noti/cron')
 libFirestore.createStore = jest.fn().mockResolvedValue({})
 libOnesignal.getDevice = jest.fn().mockReturnValue({ response: { data: {} } })
 libSellsuki.getStoreNoti= jest.fn().mockReturnValue({ data: { results: {} } })
-libFirestore.getStoreById = jest.fn().mockResolvedValueOnce({data: {function () {}}, exists: 0}).mockResolvedValueOnce({data: {function () {}}, exists: 1})
+libFirestore.getStoreById = jest.fn().mockResolvedValueOnce({data: jest.fn(), exists: 0}).mockResolvedValueOnce({data: jest.fn(), exists: 1})
 webPushNotification.storeDataTransform = jest.fn().mockReturnValue({})
 
 const { isPlayer, createUser, getPlayer, getStoreNoti } = require('../../../services/web-noti/register')
@@ -20,6 +20,7 @@ describe ('describe services/register endpoint', async () => {
 
   test ('check playerId already have in Firestore', async () => { 
     const result = await isPlayer('1')
+    expect(result).toEqual(true)
     expect(libFirestore.getStoreById.mock.calls.length).toBe(2)
   })
   

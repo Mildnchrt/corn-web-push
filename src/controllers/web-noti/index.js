@@ -1,4 +1,4 @@
-const cronController = require('./cronWebPush')
+const cronController = require('./cron')
 const uiController = require('./ui')
 const registerController = require('./register')
 

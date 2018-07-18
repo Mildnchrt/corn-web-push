@@ -1,7 +1,7 @@
 const libFirestore = require('../../../library/firestore')
 const libOnesignal = require('../../../library/onesignal')
 const libSellsuki = require('../../../library/sellsuki')
-const webPushNotification  = require('../../../services/web-noti/webPushNotification')
+const webPushNotification  = require('../../../services/web-noti/cron')
 
 libFirestore.createStore = jest.fn().mockResolvedValue({})
 libOnesignal.getDevice = jest.fn().mockReturnValue({ response: { data: {} } })

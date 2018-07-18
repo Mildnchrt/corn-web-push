@@ -92,7 +92,7 @@
               
               const res = httpGet('http://localhost:8005/api/register/'+ storeId + '/' + playerIdCurrent + '/' + isAllowed)
               console.log('Add to FireStore : >>>>>>>>>>>>>>>>>>> ', res)
-              if(res==='alreadyHaveUser' || res==='success') {
+              if(res.message!=='fail') {
                 document.getElementById('register-button').style.display = 'none'
               }
             }])

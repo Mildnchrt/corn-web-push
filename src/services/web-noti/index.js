@@ -1,4 +1,4 @@
-const webPushNotification = require('./webPushNotification')
+const webPushNotification = require('./cron')
 const register = require('./register')
 
 module.exports = {

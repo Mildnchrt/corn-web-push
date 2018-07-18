@@ -6,10 +6,7 @@
     <!-- <script type="text/javascript" src="https://l2.io/ip.js?var=storeid"></script> -->
     <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
     <script>
-    let storeId = '1'
     OneSignal = window.OneSignal || []
-    
-    console.log(storeId)
     OneSignal.push(function () {
       OneSignal.init({
         appId: '17056444-a80b-40d4-9388-1a9a751b0f31',
@@ -89,10 +86,10 @@
               if (permission === 'granted') {
                 isAllowed = true
               }
-              
+              let storeId = document.getElementById('storeid').value
               const res = httpGet('http://localhost:8005/api/register/'+ storeId + '/' + playerIdCurrent + '/' + isAllowed)
               console.log('Add to FireStore : >>>>>>>>>>>>>>>>>>> ', res)
-              if(res==='alreadyHaveUser' || res==='success') {
+              if(res ==='{"success":0,"message":"Store data is duplicated."}' || res ==='{"success":1,"message":"Created success."}') {
                 document.getElementById('register-button').style.display = 'none'
               }
             }])
@@ -108,14 +105,14 @@
       xmlHttp.send(null)
       return xmlHttp.responseText
     }
-    checkStoreIdHaveAlready () 
     </script>
     </head>
     <body>
-      <div align='center'>
+      <div id='insert-storeid' align='center'>
+        <input id='storeid' placeholder='STOREID' required></input>
         <p id='demo'>PlayerId From Onesignal</p>
         <button id='register-button'  onclick='subscribe()' style='margin-right: 100px'>Register</button>
-        <button id='send-button'  onclick='corn()' style='margin-right: 100px'>Corn</button>
+        <button id='send-button'  onclick='corn()' style='margin-right: 0px'>Corn</button>
       </div>
     </body>
 </html>
